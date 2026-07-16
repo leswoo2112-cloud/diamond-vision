@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#07101f"
+    >
+
+    <title>DiamondVision 1.0</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+</head>
+
+<body>
+
+    <!-- =========================================
+         상단 헤더
+    ========================================== -->
+
+    <header class="top-header">
+
+        <div class="brand-area">
+            <div class="brand-logo">⚾</div>
+
+            <div>
+                <h1>DIAMOND VISION</h1>
+                <p>BASEBALL ANALYTICS</p>
+            </div>
+        </div>
+
+        <nav class="top-nav">
+            <button class="nav-button active">
+                경기 분석
+            </button>
+
+            <button class="nav-button">
+                선수 분석
+            </button>
+
+            <button class="nav-button">
+                팀 분석
+            </button>
+
+            <button class="nav-button">
+                리포트
+            </button>
+        </nav>
+
+        <div class="header-status">
+            <span id="todayDate">
+                2026. 07. 16
+            </span>
+
+            <span class="live-status">
+                <i></i>
+                LIVE
+            </span>
+        </div>
+
+    </header>
+
+
+    <!-- =========================================
+         전체 레이아웃
+    ========================================== -->
+
+    <div class="app-layout">
+
+        <!-- 왼쪽 메뉴 -->
+
+        <aside class="sidebar">
+
+            <div class="side-menu-group">
+
+                <p class="side-title">
+                    경기 관리
+                </p>
+
+                <button class="side-menu active">
+                    <span>▦</span>
+                    실시간 분석
+                </button>
+
+                <button class="side-menu">
+                    <span>▤</span>
+                    경기 기록
+                </button>
+
+                <button class="side-menu">
+                    <span>◷</span>
+                    경기 일정
+                </button>
+
+                <button class="side-menu">
+                    <span>⌁</span>
+                    상대 전력
+                </button>
+
+            </div>
+
+
+            <div class="side-menu-group">
+
+                <p class="side-title">
+                    데이터
+                </p>
+
+                <button class="side-menu">
+                    <span>♙</span>
+                    선수 데이터
+                </button>
+
+                <button class="side-menu">
+                    <span>▣</span>
+                    영상 관리
+                </button>
+
+                <button class="side-menu">
+                    <span>◇</span>
+                    태그 관리
+                </button>
+
+            </div>
+
+
+            <div class="side-menu-group">
+
+                <p class="side-title">
+                    분석 도구
+                </p>
+
+                <button class="side-menu">
+                    <span>▥</span>
+                    스탯 대시보드
+                </button>
+
+                <button class="side-menu">
+                    <span>⌁</span>
+                    차트 분석
+                </button>
+
+                <button class="side-menu">
+                    <span>▧</span>
+                    리포트 생성
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- 메인 콘텐츠 -->
+
+        <main class="main-content">
+
+            <!-- =========================================
+                 경기 점수판
+            ========================================== -->
+
+            <section class="scoreboard-card">
+
+                <div class="team-score home-team">
+
+                    <div>
+                        <span class="team-label">
+                            HOME
+                        </span>
+
+                        <input
+                            id="homeTeamName"
+                            class="team-name-input"
+                            type="text"
+                            value="레드 이글스"
+                        >
+                    </div>
+
+                    <strong id="homeScore">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="game-status-center">
+
+                    <div class="inning-row">
+
+                        <button
+                            type="button"
+                            onclick="previousInning()"
+                        >
+                            ◀
+                        </button>
+
+                        <strong id="inningDisplay">
+                            1회초
+                        </strong>
+
+                        <button
+                            type="button"
+                            onclick="nextInning()"
+                        >
+                            ▶
+                        </button>
+
+                    </div>
+
+
+                    <div class="base-diamond">
+
+                        <span
+                            id="base2"
+                            class="base base-two"
+                        ></span>
+
+                        <span
+                            id="base3"
+                            class="base base-three"
+                        ></span>
+
+                        <span
+                            id="base1"
+                            class="base base-one"
+                        ></span>
+
+                    </div>
+
+
+                    <div class="game-counts">
+
+                        <div>
+                            <span>B</span>
+
+                            <b id="ballCount">
+                                0
+                            </b>
+                        </div>
+
+                        <div>
+                            <span>S</span>
+
+                            <b id="strikeCount">
+                                0
+                            </b>
+                        </div>
+
+                        <div>
+                            <span>O</span>
+
+                            <b id="outCount">
+                                0
+                            </b>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="team-score away-team">
+
+                    <strong id="awayScore">
+                        0
+                    </strong>
+
+                    <div>
+                        <span class="team-label">
+                            AWAY
+                        </span>
+
+                        <input
+                            id="awayTeamName"
+                            class="team-name-input"
+                            type="text"
+                            value="블루 타이거즈"
+                        >
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                 영상 + 기록 영역
+            ========================================== -->
+
+            <section class="analysis-grid">
+
+                <!-- 영상 -->
+
+                <article class="dashboard-card video-panel">
+
+                    <div class="card-header">
+                        <div>
+                            <span class="section-label">
+                                GAME VIDEO
+                            </span>
+
+                            <h2>경기 영상 분석</h2>
+                        </div>
+                    </div>
+
+
+                    <div class="youtube-row">
+
+                        <input
+                            id="youtubeUrl"
+                            type="text"
+                            placeholder="유튜브 영상 주소 붙여넣기"
+                        >
+
+                        <button
+                            type="button"
+                            onclick="loadYouTubeVideo()"
+                        >
+                            유튜브 불러오기
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="youtubePlayerWrap"
+                        class="youtube-player-wrap"
+                        hidden
+                    >
+                        <div id="youtubePlayer"></div>
+                    </div>
+
+
+                    <div class="file-upload-row">
+
+                        <label class="file-button">
+                            영상 선택
+
+                            <input
+                                type="file"
+                                accept="video/*"
+                                onchange="loadVideo(event)"
+                            >
+                        </label>
+
+                        <span id="videoFileName">
+                            선택된 영상 없음
+                        </span>
+
+                    </div>
+
+
+                    <video
+                        id="video"
+                        controls
+                        playsinline
+                    ></video>
+
+
+                    <div class="video-controls">
+
+                        <button
+                            type="button"
+                            onclick="back5()"
+                        >
+                            −5초
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="playPause()"
+                        >
+                            재생 / 정지
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="forward5()"
+                        >
+                            +5초
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="setVideoSpeed(0.5)"
+                        >
+                            0.5×
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="setVideoSpeed(1)"
+                        >
+                            1×
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="setVideoSpeed(2)"
+                        >
+                            2×
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+                <!-- 기록 입력 -->
+
+                <article class="dashboard-card record-panel">
+
+                    <div class="card-header">
+
+                        <div>
+                            <span class="section-label">
+                                LIVE SCORING
+                            </span>
+
+                            <h2>타석 기록</h2>
+                        </div>
+
+                        <button
+                            class="reset-button"
+                            type="button"
+                            onclick="resetCurrentPlateAppearance()"
+                        >
+                            현재 타석 초기화
+                        </button>
+
+                    </div>
+
+
+                    <!-- 선수 입력 -->
+
+                    <div class="player-input-grid">
+
+                        <label>
+                            투수
+
+                            <input
+                                id="pitcherName"
+                                type="text"
+                                placeholder="투수 이름"
+                            >
+                        </label>
+
+                        <label>
+                            타자
+
+                            <input
+                                id="batterName"
+                                type="text"
+                                placeholder="타자 이름"
+                            >
+                        </label>
+
+                        <label>
+                            타석 방향
+
+                            <select id="batterSide">
+                                <option value="R">
+                                    우타
+                                </option>
+
+                                <option value="L">
+                                    좌타
+                                </option>
+
+                                <option value="S">
+                                    스위치
+                                </option>
+                            </select>
+                        </label>
+
+                    </div>
+
+
+                    <!-- 투구 순서 -->
+
+                    <div class="pitch-sequence-box">
+
+                        <div class="mini-header">
+                            <h3>투구 순서</h3>
+
+                            <span id="pitchCountText">
+                                총 0구
+                            </span>
+                        </div>
+
+                        <div
+                            id="pitchSequence"
+                            class="pitch-sequence"
+                        >
+                            아직 투구 기록이 없습니다.
+                        </div>
+
+                    </div>
+
+
+                    <!-- 투구 버튼 -->
+
+                    <div class="button-section">
+
+                        <h3>투구 기록</h3>
+
+                        <div class="record-button-grid pitch-buttons">
+
+                            <button
+                                class="action-button strike-button"
+                                type="button"
+                                onclick="addPitch('S')"
+                            >
+                                <span>S</span>
+                                스트라이크
+                            </button>
+
+                            <button
+                                class="action-button ball-button"
+                                type="button"
+                                onclick="addPitch('B')"
+                            >
+                                <span>B</span>
+                                볼
+                            </button>
+
+                            <button
+                                class="action-button foul-button"
+                                type="button"
+                                onclick="addPitch('F')"
+                            >
+                                <span>F</span>
+                                파울
+                            </button>
+
+                            <button
+                                class="action-button swing-button"
+                                type="button"
+                                onclick="addPitch('SW')"
+                            >
+                                <span>SW</span>
+                                헛스윙
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- 타격 결과 -->
+
+                    <div class="button-section">
+
+                        <h3>타석 결과</h3>
+
+                        <div class="record-button-grid result-buttons">
+
+                            <button
+                                type="button"
+                                onclick="setPlateResult('안타')"
+                            >
+                                안타
+                            </button>
+
+                            <button
+                                type="button"
+                                onclick="setPlateResult('2루타')"
+                            >
+                                2루타
+                            </button>
+
+                            <button
+                                type="button"
+                                onclick="setPlateResult('3루타')"
+                            >
+                                3루타
+                            </button>
+
+                            <button
+                                class="home-run-button"
+                                type="button"
+                                onclick="setPlateResult('홈런')"
+                            >
+                                홈런
+                            </button>
+
+                            <button
+                                type="button"
+                                onclick="setPlateResult('볼넷')"
+                            >
+                                볼넷
+                            </button>
+
+                            <button
+                                type="button"
+                                onclick="setPlateResult('삼진')"
+                            >
+                                삼진
+                            </button>
+
+                            <button
+                                type="button"
+                                onclick="setPlateResult('땅볼')"
+                            >
+                                땅볼
+                            </button>
+
+                            <button
+                                type="button"
+                                onclick="setPlateResult('뜬공')"
+                            >
+                                뜬공
+                            </button>
+
+                            <button
+                                type="button"
+                                onclick="setPlateResult('라인드라이브')"
+                            >
+                                라인드라이브
+                            </button>
+
+                            <button
+                                type="button"
+                                onclick="setPlateResult('희생플라이')"
+                            >
+                                희생플라이
+                            </button>
+
+                            <button
+                                type="button"
+                                onclick="setPlateResult('번트')"
+                            >
+                                번트
+                            </button>
+
+                            <button
+                                type="button"
+                                onclick="setPlateResult('몸에 맞는 공')"
+                            >
+                                사구
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- 추가 상황 -->
+
+                    <div class="situation-grid">
+
+                        <label>
+                            득점
+
+                            <input
+                                id="runScored"
+                                type="number"
+                                min="0"
+                                max="4"
+                                value="0"
+                            >
+                        </label>
+
+                        <label>
+                            타점
+
+                            <input
+                                id="rbi"
+                                type="number"
+                                min="0"
+                                max="4"
+                                value="0"
+                            >
+                        </label>
+
+                        <label>
+                            메모
+
+                            <input
+                                id="playNote"
+                                type="text"
+                                placeholder="수비 위치, 작전 등"
+                            >
+                        </label>
+
+                    </div>
+
+
+                    <div class="selected-result">
+
+                        선택 결과:
+
+                        <strong id="selectedResult">
+                            없음
+                        </strong>
+
+                    </div>
+
+
+                    <button
+                        class="save-plate-button"
+                        type="button"
+                        onclick="savePlateAppearance()"
+                    >
+                        타석 저장
+                    </button>
+
+                </article>
+
+            </section>
+
+
+            <!-- =========================================
+                 기록표 + 선수 분석
+            ========================================== -->
+
+            <section class="bottom-grid">
+
+                <!-- 최근 타석 기록 -->
+
+                <article class="dashboard-card table-panel">
+
+                    <div class="card-header">
+
+                        <div>
+                            <span class="section-label">
+                                PLAY BY PLAY
+                            </span>
+
+                            <h2>최근 타석 기록</h2>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="reset-button"
+                            onclick="undoLastPlateAppearance()"
+                        >
+                            최근 기록 취소
+                        </button>
+
+                    </div>
+
+
+                    <div class="table-scroll">
+
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>회차</th>
+                                    <th>투수</th>
+                                    <th>타자</th>
+                                    <th>투구 내용</th>
+                                    <th>결과</th>
+                                    <th>주자</th>
+                                    <th>아웃</th>
+                                    <th>스코어</th>
+                                    <th>기타</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="recordTableBody">
+
+                                <tr class="empty-table-row">
+                                    <td colspan="9">
+                                        아직 저장된 타석이 없습니다.
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </article>
+
+
+                <!-- 타자 분석 -->
+
+                <article class="dashboard-card stats-panel">
+
+                    <div class="card-header">
+
+                        <div>
+                            <span class="section-label">
+                                BATTER ANALYSIS
+                            </span>
+
+                            <h2>타자 주요 분석</h2>
+                        </div>
+
+                    </div>
+
+                    <div id="batterStats" class="stats-content">
+
+                        <div class="empty-state">
+                            타석을 저장하면 타자 분석이 표시됩니다.
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- 투수 분석 -->
+
+                <article class="dashboard-card stats-panel">
+
+                    <div class="card-header">
+
+                        <div>
+                            <span class="section-label">
+                                PITCHER ANALYSIS
+                            </span>
+
+                            <h2>투수 주요 분석</h2>
+                        </div>
+
+                    </div>
+
+                    <div id="pitcherStats" class="stats-content">
+
+                        <div class="empty-state">
+                            타석을 저장하면 투수 분석이 표시됩니다.
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- =========================================
+                 차트 영역
+            ========================================== -->
+
+            <section class="chart-grid">
+
+                <article class="dashboard-card chart-card">
+
+                    <div class="card-header">
+                        <h2>이닝별 득점 흐름</h2>
+                    </div>
+
+                    <canvas id="inningScoreChart"></canvas>
+
+                </article>
+
+
+                <article class="dashboard-card chart-card">
+
+                    <div class="card-header">
+                        <h2>타석 결과 분포</h2>
+                    </div>
+
+                    <canvas id="resultChart"></canvas>
+
+                </article>
+
+
+                <article class="dashboard-card chart-card">
+
+                    <div class="card-header">
+                        <h2>오늘의 핵심 선수</h2>
+                    </div>
+
+                    <div id="mvpCard" class="mvp-card">
+
+                        <div class="empty-state">
+                            경기 기록이 없습니다.
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- 차트 라이브러리 -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <!-- 메인 기능 -->
+
+    <script src="app.js"></script>
+
+
+    <!-- 유튜브 플레이어 -->
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+</body>
+</html>
