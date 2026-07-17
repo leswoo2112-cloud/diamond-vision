@@ -5,12 +5,12 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
 
     <meta
         name="theme-color"
-        content="#07101f"
+        content="#050b18"
     >
 
     <title>DiamondVision 1.0</title>
@@ -19,89 +19,141 @@
         rel="stylesheet"
         href="style.css"
     >
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js"
+        defer
+    ></script>
+
+    <script
+        src="app.js"
+        defer
+    ></script>
+
+    <script
+        src="https://www.youtube.com/iframe_api"
+        defer
+    ></script>
 </head>
 
 <body>
 
-    <!-- =========================================
+    <!-- =====================================================
          상단 헤더
-    ========================================== -->
+    ====================================================== -->
 
     <header class="top-header">
 
         <div class="brand-area">
-            <div class="brand-logo">⚾</div>
 
-            <div>
+            <div class="brand-icon">
+                ⚾
+            </div>
+
+            <div class="brand-text">
                 <h1>DIAMOND VISION</h1>
+
                 <p>BASEBALL ANALYTICS</p>
             </div>
+
         </div>
 
-        <nav class="top-nav">
-            <button class="nav-button active">
+
+        <nav class="top-navigation">
+
+            <button
+                type="button"
+                class="top-nav-button active"
+            >
                 경기 분석
             </button>
 
-            <button class="nav-button">
+            <button
+                type="button"
+                class="top-nav-button"
+            >
                 선수 분석
             </button>
 
-            <button class="nav-button">
+            <button
+                type="button"
+                class="top-nav-button"
+            >
                 팀 분석
             </button>
 
-            <button class="nav-button">
+            <button
+                type="button"
+                class="top-nav-button"
+            >
                 리포트
             </button>
+
         </nav>
 
+
         <div class="header-status">
+
             <span id="todayDate">
-                2026. 07. 16
+                2026. 07. 17
             </span>
 
-            <span class="live-status">
-                <i></i>
+            <span class="live-badge">
+                <span class="live-dot"></span>
                 LIVE
             </span>
+
         </div>
 
     </header>
 
 
-    <!-- =========================================
+    <!-- =====================================================
          전체 레이아웃
-    ========================================== -->
+    ====================================================== -->
 
     <div class="app-layout">
 
-        <!-- 왼쪽 메뉴 -->
+        <!-- =================================================
+             왼쪽 사이드바
+        ================================================== -->
 
         <aside class="sidebar">
 
-            <div class="side-menu-group">
+            <div class="sidebar-section">
 
-                <p class="side-title">
+                <p class="sidebar-title">
                     경기 관리
                 </p>
 
-                <button class="side-menu active">
+                <button
+                    type="button"
+                    class="sidebar-button active"
+                >
                     <span>▦</span>
                     실시간 분석
                 </button>
 
-                <button class="side-menu">
+                <button
+                    type="button"
+                    class="sidebar-button"
+                >
                     <span>▤</span>
                     경기 기록
                 </button>
 
-                <button class="side-menu">
+                <button
+                    type="button"
+                    class="sidebar-button"
+                >
                     <span>◷</span>
                     경기 일정
                 </button>
 
-                <button class="side-menu">
+                <button
+                    type="button"
+                    class="sidebar-button"
+                >
                     <span>⌁</span>
                     상대 전력
                 </button>
@@ -109,23 +161,32 @@
             </div>
 
 
-            <div class="side-menu-group">
+            <div class="sidebar-section">
 
-                <p class="side-title">
+                <p class="sidebar-title">
                     데이터
                 </p>
 
-                <button class="side-menu">
+                <button
+                    type="button"
+                    class="sidebar-button"
+                >
                     <span>♙</span>
                     선수 데이터
                 </button>
 
-                <button class="side-menu">
+                <button
+                    type="button"
+                    class="sidebar-button"
+                >
                     <span>▣</span>
                     영상 관리
                 </button>
 
-                <button class="side-menu">
+                <button
+                    type="button"
+                    class="sidebar-button"
+                >
                     <span>◇</span>
                     태그 관리
                 </button>
@@ -133,23 +194,32 @@
             </div>
 
 
-            <div class="side-menu-group">
+            <div class="sidebar-section">
 
-                <p class="side-title">
+                <p class="sidebar-title">
                     분석 도구
                 </p>
 
-                <button class="side-menu">
+                <button
+                    type="button"
+                    class="sidebar-button"
+                >
                     <span>▥</span>
                     스탯 대시보드
                 </button>
 
-                <button class="side-menu">
+                <button
+                    type="button"
+                    class="sidebar-button"
+                >
                     <span>⌁</span>
                     차트 분석
                 </button>
 
-                <button class="side-menu">
+                <button
+                    type="button"
+                    class="sidebar-button"
+                >
                     <span>▧</span>
                     리포트 생성
                 </button>
@@ -159,19 +229,25 @@
         </aside>
 
 
-        <!-- 메인 콘텐츠 -->
+        <!-- =================================================
+             메인 영역
+        ================================================== -->
 
         <main class="main-content">
 
-            <!-- =========================================
+
+            <!-- =============================================
                  경기 점수판
-            ========================================== -->
+            ============================================== -->
 
             <section class="scoreboard-card">
 
-                <div class="team-score home-team">
+                <!-- HOME -->
 
-                    <div>
+                <div class="team-score home-team-score">
+
+                    <div class="team-score-info">
+
                         <span class="team-label">
                             HOME
                         </span>
@@ -181,23 +257,33 @@
                             class="team-name-input"
                             type="text"
                             value="레드 이글스"
+                            maxlength="20"
+                            aria-label="홈팀 이름"
                         >
+
                     </div>
 
-                    <strong id="homeScore">
+                    <strong
+                        id="homeScore"
+                        class="score-number"
+                    >
                         0
                     </strong>
 
                 </div>
 
 
+                <!-- 경기 상황 -->
+
                 <div class="game-status-center">
 
-                    <div class="inning-row">
+                    <div class="inning-control">
 
                         <button
                             type="button"
+                            class="inning-button"
                             onclick="previousInning()"
+                            aria-label="이전 이닝"
                         >
                             ◀
                         </button>
@@ -208,7 +294,9 @@
 
                         <button
                             type="button"
+                            class="inning-button"
                             onclick="nextInning()"
+                            aria-label="다음 이닝"
                         >
                             ▶
                         </button>
@@ -218,48 +306,54 @@
 
                     <div class="base-diamond">
 
-                        <span
+                        <button
+                            type="button"
                             id="base2"
-                            class="base base-two"
-                        ></span>
+                            class="base base-second"
+                            aria-label="2루 주자"
+                        ></button>
 
-                        <span
+                        <button
+                            type="button"
                             id="base3"
-                            class="base base-three"
-                        ></span>
+                            class="base base-third"
+                            aria-label="3루 주자"
+                        ></button>
 
-                        <span
+                        <button
+                            type="button"
                             id="base1"
-                            class="base base-one"
-                        ></span>
+                            class="base base-first"
+                            aria-label="1루 주자"
+                        ></button>
 
                     </div>
 
 
-                    <div class="game-counts">
+                    <div class="count-board">
 
-                        <div>
+                        <div class="count-item ball-count-item">
                             <span>B</span>
 
-                            <b id="ballCount">
+                            <strong id="ballCount">
                                 0
-                            </b>
+                            </strong>
                         </div>
 
-                        <div>
+                        <div class="count-item strike-count-item">
                             <span>S</span>
 
-                            <b id="strikeCount">
+                            <strong id="strikeCount">
                                 0
-                            </b>
+                            </strong>
                         </div>
 
-                        <div>
+                        <div class="count-item out-count-item">
                             <span>O</span>
 
-                            <b id="outCount">
+                            <strong id="outCount">
                                 0
-                            </b>
+                            </strong>
                         </div>
 
                     </div>
@@ -267,13 +361,19 @@
                 </div>
 
 
-                <div class="team-score away-team">
+                <!-- AWAY -->
 
-                    <strong id="awayScore">
+                <div class="team-score away-team-score">
+
+                    <strong
+                        id="awayScore"
+                        class="score-number"
+                    >
                         0
                     </strong>
 
-                    <div>
+                    <div class="team-score-info">
+
                         <span class="team-label">
                             AWAY
                         </span>
@@ -283,7 +383,10 @@
                             class="team-name-input"
                             type="text"
                             value="블루 타이거즈"
+                            maxlength="20"
+                            aria-label="원정팀 이름"
                         >
+
                     </div>
 
                 </div>
@@ -291,24 +394,777 @@
             </section>
 
 
-            <!-- =========================================
-                 영상 + 기록 영역
-            ========================================== -->
+            <!-- =============================================
+                 현재 타순 안내
+            ============================================== -->
+
+            <section class="current-lineup-bar">
+
+                <div class="current-team-box">
+
+                    <span class="small-label">
+                        현재 공격팀
+                    </span>
+
+                    <strong id="currentOffenseTeam">
+                        AWAY · 블루 타이거즈
+                    </strong>
+
+                </div>
+
+
+                <div class="current-batter-box">
+
+                    <span class="small-label">
+                        현재 타자
+                    </span>
+
+                    <strong id="currentBatterDisplay">
+                        라인업을 등록해주세요
+                    </strong>
+
+                </div>
+
+
+                <div class="next-batter-box">
+
+                    <span class="small-label">
+                        다음 타자
+                    </span>
+
+                    <strong id="nextBatterDisplay">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="lineup-open-button"
+                    onclick="toggleLineupPanel()"
+                >
+                    라인업 설정
+                </button>
+
+            </section>
+
+
+            <!-- =============================================
+                 라인업 설정
+            ============================================== -->
+
+            <section
+                id="lineupPanel"
+                class="lineup-panel"
+            >
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-eyebrow">
+                            STARTING LINEUP
+                        </span>
+
+                        <h2>
+                            양 팀 라인업 설정
+                        </h2>
+                    </div>
+
+                    <div class="lineup-actions">
+
+                        <button
+                            type="button"
+                            class="secondary-button"
+                            onclick="clearLineups()"
+                        >
+                            라인업 초기화
+                        </button>
+
+                        <button
+                            type="button"
+                            class="primary-small-button"
+                            onclick="saveLineups()"
+                        >
+                            라인업 저장
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="lineup-grid">
+
+                    <!-- HOME 라인업 -->
+
+                    <article class="lineup-team-card home-lineup-card">
+
+                        <div class="lineup-team-header">
+
+                            <div>
+                                <span class="team-label">
+                                    HOME
+                                </span>
+
+                                <h3 id="homeLineupTitle">
+                                    레드 이글스
+                                </h3>
+                            </div>
+
+                            <span
+                                id="homeCurrentOrderBadge"
+                                class="current-order-badge"
+                            >
+                                다음 타순 1번
+                            </span>
+
+                        </div>
+
+
+                        <div class="lineup-list">
+
+                            <label class="lineup-row">
+                                <span class="batting-order">
+                                    1
+                                </span>
+
+                                <input
+                                    id="homePlayer1"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="1번 타자"
+                                    maxlength="20"
+                                    data-team="home"
+                                    data-order="1"
+                                >
+
+                                <select
+                                    id="homePosition1"
+                                    class="position-select"
+                                    aria-label="홈팀 1번 포지션"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">2</span>
+
+                                <input
+                                    id="homePlayer2"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="2번 타자"
+                                    maxlength="20"
+                                    data-team="home"
+                                    data-order="2"
+                                >
+
+                                <select
+                                    id="homePosition2"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">3</span>
+
+                                <input
+                                    id="homePlayer3"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="3번 타자"
+                                    maxlength="20"
+                                    data-team="home"
+                                    data-order="3"
+                                >
+
+                                <select
+                                    id="homePosition3"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">4</span>
+
+                                <input
+                                    id="homePlayer4"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="4번 타자"
+                                    maxlength="20"
+                                    data-team="home"
+                                    data-order="4"
+                                >
+
+                                <select
+                                    id="homePosition4"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">5</span>
+
+                                <input
+                                    id="homePlayer5"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="5번 타자"
+                                    maxlength="20"
+                                    data-team="home"
+                                    data-order="5"
+                                >
+
+                                <select
+                                    id="homePosition5"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">6</span>
+
+                                <input
+                                    id="homePlayer6"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="6번 타자"
+                                    maxlength="20"
+                                    data-team="home"
+                                    data-order="6"
+                                >
+
+                                <select
+                                    id="homePosition6"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">7</span>
+
+                                <input
+                                    id="homePlayer7"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="7번 타자"
+                                    maxlength="20"
+                                    data-team="home"
+                                    data-order="7"
+                                >
+
+                                <select
+                                    id="homePosition7"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">8</span>
+
+                                <input
+                                    id="homePlayer8"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="8번 타자"
+                                    maxlength="20"
+                                    data-team="home"
+                                    data-order="8"
+                                >
+
+                                <select
+                                    id="homePosition8"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">9</span>
+
+                                <input
+                                    id="homePlayer9"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="9번 타자"
+                                    maxlength="20"
+                                    data-team="home"
+                                    data-order="9"
+                                >
+
+                                <select
+                                    id="homePosition9"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- AWAY 라인업 -->
+
+                    <article class="lineup-team-card away-lineup-card">
+
+                        <div class="lineup-team-header">
+
+                            <div>
+                                <span class="team-label">
+                                    AWAY
+                                </span>
+
+                                <h3 id="awayLineupTitle">
+                                    블루 타이거즈
+                                </h3>
+                            </div>
+
+                            <span
+                                id="awayCurrentOrderBadge"
+                                class="current-order-badge"
+                            >
+                                다음 타순 1번
+                            </span>
+
+                        </div>
+
+
+                        <div class="lineup-list">
+
+                            <label class="lineup-row">
+                                <span class="batting-order">1</span>
+
+                                <input
+                                    id="awayPlayer1"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="1번 타자"
+                                    maxlength="20"
+                                    data-team="away"
+                                    data-order="1"
+                                >
+
+                                <select
+                                    id="awayPosition1"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">2</span>
+
+                                <input
+                                    id="awayPlayer2"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="2번 타자"
+                                    maxlength="20"
+                                    data-team="away"
+                                    data-order="2"
+                                >
+
+                                <select
+                                    id="awayPosition2"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">3</span>
+
+                                <input
+                                    id="awayPlayer3"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="3번 타자"
+                                    maxlength="20"
+                                    data-team="away"
+                                    data-order="3"
+                                >
+
+                                <select
+                                    id="awayPosition3"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">4</span>
+
+                                <input
+                                    id="awayPlayer4"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="4번 타자"
+                                    maxlength="20"
+                                    data-team="away"
+                                    data-order="4"
+                                >
+
+                                <select
+                                    id="awayPosition4"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">5</span>
+
+                                <input
+                                    id="awayPlayer5"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="5번 타자"
+                                    maxlength="20"
+                                    data-team="away"
+                                    data-order="5"
+                                >
+
+                                <select
+                                    id="awayPosition5"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">6</span>
+
+                                <input
+                                    id="awayPlayer6"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="6번 타자"
+                                    maxlength="20"
+                                    data-team="away"
+                                    data-order="6"
+                                >
+
+                                <select
+                                    id="awayPosition6"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">7</span>
+
+                                <input
+                                    id="awayPlayer7"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="7번 타자"
+                                    maxlength="20"
+                                    data-team="away"
+                                    data-order="7"
+                                >
+
+                                <select
+                                    id="awayPosition7"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">8</span>
+
+                                <input
+                                    id="awayPlayer8"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="8번 타자"
+                                    maxlength="20"
+                                    data-team="away"
+                                    data-order="8"
+                                >
+
+                                <select
+                                    id="awayPosition8"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+
+                            <label class="lineup-row">
+                                <span class="batting-order">9</span>
+
+                                <input
+                                    id="awayPlayer9"
+                                    class="lineup-player-input"
+                                    type="text"
+                                    placeholder="9번 타자"
+                                    maxlength="20"
+                                    data-team="away"
+                                    data-order="9"
+                                >
+
+                                <select
+                                    id="awayPosition9"
+                                    class="position-select"
+                                >
+                                    <option value="">포지션</option>
+                                    <option value="투수">투수</option>
+                                    <option value="포수">포수</option>
+                                    <option value="1루수">1루수</option>
+                                    <option value="2루수">2루수</option>
+                                    <option value="3루수">3루수</option>
+                                    <option value="유격수">유격수</option>
+                                    <option value="좌익수">좌익수</option>
+                                    <option value="중견수">중견수</option>
+                                    <option value="우익수">우익수</option>
+                                    <option value="지명타자">지명타자</option>
+                                </select>
+                            </label>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- =============================================
+                 영상 + 타석 기록
+            ============================================== -->
 
             <section class="analysis-grid">
 
-                <!-- 영상 -->
+                <!-- 영상 분석 -->
 
-                <article class="dashboard-card video-panel">
+                <article class="video-panel">
 
-                    <div class="card-header">
+                    <div class="section-heading">
+
                         <div>
-                            <span class="section-label">
+                            <span class="section-eyebrow">
                                 GAME VIDEO
                             </span>
 
-                            <h2>경기 영상 분석</h2>
+                            <h2>
+                                경기 영상 분석
+                            </h2>
                         </div>
+
                     </div>
 
 
@@ -316,12 +1172,13 @@
 
                         <input
                             id="youtubeUrl"
-                            type="text"
+                            type="url"
                             placeholder="유튜브 영상 주소 붙여넣기"
                         >
 
                         <button
                             type="button"
+                            class="youtube-load-button"
                             onclick="loadYouTubeVideo()"
                         >
                             유튜브 불러오기
@@ -330,18 +1187,10 @@
                     </div>
 
 
-                    <div
-                        id="youtubePlayerWrap"
-                        class="youtube-player-wrap"
-                        hidden
-                    >
-                        <div id="youtubePlayer"></div>
-                    </div>
+                    <div class="file-select-row">
 
+                        <label class="video-file-button">
 
-                    <div class="file-upload-row">
-
-                        <label class="file-button">
                             영상 선택
 
                             <input
@@ -349,6 +1198,7 @@
                                 accept="video/*"
                                 onchange="loadVideo(event)"
                             >
+
                         </label>
 
                         <span id="videoFileName">
@@ -358,11 +1208,23 @@
                     </div>
 
 
-                    <video
-                        id="video"
-                        controls
-                        playsinline
-                    ></video>
+                    <div class="video-stage">
+
+                        <video
+                            id="video"
+                            controls
+                            playsinline
+                        ></video>
+
+                        <div
+                            id="youtubePlayerWrap"
+                            class="youtube-player-wrap"
+                            hidden
+                        >
+                            <div id="youtubePlayer"></div>
+                        </div>
+
+                    </div>
 
 
                     <div class="video-controls">
@@ -414,23 +1276,25 @@
                 </article>
 
 
-                <!-- 기록 입력 -->
+                <!-- 타석 기록 -->
 
-                <article class="dashboard-card record-panel">
+                <article class="record-panel">
 
-                    <div class="card-header">
+                    <div class="section-heading">
 
                         <div>
-                            <span class="section-label">
+                            <span class="section-eyebrow">
                                 LIVE SCORING
                             </span>
 
-                            <h2>타석 기록</h2>
+                            <h2>
+                                타석 기록
+                            </h2>
                         </div>
 
                         <button
-                            class="reset-button"
                             type="button"
+                            class="secondary-button"
                             onclick="resetCurrentPlateAppearance()"
                         >
                             현재 타석 초기화
@@ -438,8 +1302,6 @@
 
                     </div>
 
-
-                    <!-- 선수 입력 -->
 
                     <div class="player-input-grid">
 
@@ -450,8 +1312,10 @@
                                 id="pitcherName"
                                 type="text"
                                 placeholder="투수 이름"
+                                maxlength="20"
                             >
                         </label>
+
 
                         <label>
                             타자
@@ -459,23 +1323,25 @@
                             <input
                                 id="batterName"
                                 type="text"
-                                placeholder="타자 이름"
+                                placeholder="라인업에서 자동 입력"
+                                maxlength="20"
                             >
                         </label>
+
 
                         <label>
                             타석 방향
 
                             <select id="batterSide">
-                                <option value="R">
+                                <option value="우타">
                                     우타
                                 </option>
 
-                                <option value="L">
+                                <option value="좌타">
                                     좌타
                                 </option>
 
-                                <option value="S">
+                                <option value="스위치">
                                     스위치
                                 </option>
                             </select>
@@ -484,69 +1350,76 @@
                     </div>
 
 
-                    <!-- 투구 순서 -->
-
                     <div class="pitch-sequence-box">
 
-                        <div class="mini-header">
-                            <h3>투구 순서</h3>
+                        <div class="pitch-sequence-heading">
+
+                            <strong>
+                                투구 순서
+                            </strong>
 
                             <span id="pitchCountText">
                                 총 0구
                             </span>
+
                         </div>
 
-                        <div
-                            id="pitchSequence"
-                            class="pitch-sequence"
-                        >
+                        <div id="pitchSequence">
                             아직 투구 기록이 없습니다.
                         </div>
 
                     </div>
 
 
-                    <!-- 투구 버튼 -->
+                    <div class="record-group">
 
-                    <div class="button-section">
+                        <h3>
+                            투구 기록
+                        </h3>
 
-                        <h3>투구 기록</h3>
-
-                        <div class="record-button-grid pitch-buttons">
+                        <div class="pitch-buttons">
 
                             <button
-                                class="action-button strike-button"
                                 type="button"
                                 onclick="addPitch('S')"
                             >
-                                <span>S</span>
+                                <span class="pitch-icon strike-icon">
+                                    S
+                                </span>
+
                                 스트라이크
                             </button>
 
                             <button
-                                class="action-button ball-button"
                                 type="button"
                                 onclick="addPitch('B')"
                             >
-                                <span>B</span>
+                                <span class="pitch-icon ball-icon">
+                                    B
+                                </span>
+
                                 볼
                             </button>
 
                             <button
-                                class="action-button foul-button"
                                 type="button"
                                 onclick="addPitch('F')"
                             >
-                                <span>F</span>
+                                <span class="pitch-icon foul-icon">
+                                    F
+                                </span>
+
                                 파울
                             </button>
 
                             <button
-                                class="action-button swing-button"
                                 type="button"
                                 onclick="addPitch('SW')"
                             >
-                                <span>SW</span>
+                                <span class="pitch-icon swing-icon">
+                                    SW
+                                </span>
+
                                 헛스윙
                             </button>
 
@@ -555,13 +1428,13 @@
                     </div>
 
 
-                    <!-- 타격 결과 -->
+                    <div class="record-group">
 
-                    <div class="button-section">
+                        <h3>
+                            타석 결과
+                        </h3>
 
-                        <h3>타석 결과</h3>
-
-                        <div class="record-button-grid result-buttons">
+                        <div class="result-buttons">
 
                             <button
                                 type="button"
@@ -585,8 +1458,8 @@
                             </button>
 
                             <button
-                                class="home-run-button"
                                 type="button"
+                                class="home-run-button"
                                 onclick="setPlateResult('홈런')"
                             >
                                 홈런
@@ -594,9 +1467,9 @@
 
                             <button
                                 type="button"
-                                onclick="setPlateResult('볼넷')"
+                                onclick="setPlateResult('몸에 맞는 공')"
                             >
-                                볼넷
+                                몸에 맞는 공
                             </button>
 
                             <button
@@ -643,17 +1516,22 @@
 
                             <button
                                 type="button"
-                                onclick="setPlateResult('몸에 맞는 공')"
+                                onclick="setPlateResult('실책')"
                             >
-                                사구
+                                실책
+                            </button>
+
+                            <button
+                                type="button"
+                                onclick="setPlateResult('야수선택')"
+                            >
+                                야수선택
                             </button>
 
                         </div>
 
                     </div>
 
-
-                    <!-- 추가 상황 -->
 
                     <div class="situation-grid">
 
@@ -663,11 +1541,12 @@
                             <input
                                 id="runScored"
                                 type="number"
-                                min="0"
-                                max="4"
                                 value="0"
+                                min="0"
+                                max="9"
                             >
                         </label>
+
 
                         <label>
                             타점
@@ -675,11 +1554,12 @@
                             <input
                                 id="rbi"
                                 type="number"
-                                min="0"
-                                max="4"
                                 value="0"
+                                min="0"
+                                max="9"
                             >
                         </label>
+
 
                         <label>
                             메모
@@ -688,26 +1568,24 @@
                                 id="playNote"
                                 type="text"
                                 placeholder="수비 위치, 작전 등"
+                                maxlength="100"
                             >
                         </label>
 
                     </div>
 
 
-                    <div class="selected-result">
-
-                        선택 결과:
-
-                        <strong id="selectedResult">
-                            없음
-                        </strong>
-
+                    <div
+                        id="selectedResult"
+                        class="selected-result-box"
+                    >
+                        없음
                     </div>
 
 
                     <button
-                        class="save-plate-button"
                         type="button"
+                        class="save-record-button"
                         onclick="savePlateAppearance()"
                     >
                         타석 저장
@@ -718,29 +1596,29 @@
             </section>
 
 
-            <!-- =========================================
-                 기록표 + 선수 분석
-            ========================================== -->
+            <!-- =============================================
+                 최근 기록과 선수 분석
+            ============================================== -->
 
-            <section class="bottom-grid">
+            <section class="summary-grid">
 
-                <!-- 최근 타석 기록 -->
+                <article class="table-panel">
 
-                <article class="dashboard-card table-panel">
-
-                    <div class="card-header">
+                    <div class="section-heading">
 
                         <div>
-                            <span class="section-label">
+                            <span class="section-eyebrow">
                                 PLAY BY PLAY
                             </span>
 
-                            <h2>최근 타석 기록</h2>
+                            <h2>
+                                최근 타석 기록
+                            </h2>
                         </div>
 
                         <button
                             type="button"
-                            class="reset-button"
+                            class="secondary-button"
                             onclick="undoLastPlateAppearance()"
                         >
                             최근 기록 취소
@@ -751,26 +1629,27 @@
 
                     <div class="table-scroll">
 
-                        <table>
+                        <table class="record-table">
 
                             <thead>
                                 <tr>
                                     <th>회차</th>
+                                    <th>팀</th>
+                                    <th>타순</th>
                                     <th>투수</th>
                                     <th>타자</th>
-                                    <th>투구 내용</th>
+                                    <th>투구</th>
                                     <th>결과</th>
-                                    <th>주자</th>
                                     <th>아웃</th>
-                                    <th>스코어</th>
-                                    <th>기타</th>
+                                    <th>점수</th>
+                                    <th>메모</th>
                                 </tr>
                             </thead>
 
                             <tbody id="recordTableBody">
 
                                 <tr class="empty-table-row">
-                                    <td colspan="9">
+                                    <td colspan="10">
                                         아직 저장된 타석이 없습니다.
                                     </td>
                                 </tr>
@@ -784,23 +1663,23 @@
                 </article>
 
 
-                <!-- 타자 분석 -->
+                <article class="stats-panel">
 
-                <article class="dashboard-card stats-panel">
-
-                    <div class="card-header">
+                    <div class="section-heading">
 
                         <div>
-                            <span class="section-label">
+                            <span class="section-eyebrow">
                                 BATTER ANALYSIS
                             </span>
 
-                            <h2>타자 주요 분석</h2>
+                            <h2>
+                                타자 주요 분석
+                            </h2>
                         </div>
 
                     </div>
 
-                    <div id="batterStats" class="stats-content">
+                    <div id="batterStats">
 
                         <div class="empty-state">
                             타석을 저장하면 타자 분석이 표시됩니다.
@@ -811,23 +1690,23 @@
                 </article>
 
 
-                <!-- 투수 분석 -->
+                <article class="stats-panel">
 
-                <article class="dashboard-card stats-panel">
-
-                    <div class="card-header">
+                    <div class="section-heading">
 
                         <div>
-                            <span class="section-label">
+                            <span class="section-eyebrow">
                                 PITCHER ANALYSIS
                             </span>
 
-                            <h2>투수 주요 분석</h2>
+                            <h2>
+                                투수 주요 분석
+                            </h2>
                         </div>
 
                     </div>
 
-                    <div id="pitcherStats" class="stats-content">
+                    <div id="pitcherStats">
 
                         <div class="empty-state">
                             타석을 저장하면 투수 분석이 표시됩니다.
@@ -840,70 +1719,93 @@
             </section>
 
 
-            <!-- =========================================
-                 차트 영역
-            ========================================== -->
+            <!-- =============================================
+                 차트
+            ============================================== -->
 
-            <section class="chart-grid">
+            <section class="charts-grid">
 
-                <article class="dashboard-card chart-card">
+                <article class="chart-card">
 
-                    <div class="card-header">
-                        <h2>이닝별 득점 흐름</h2>
-                    </div>
+                    <div class="section-heading">
 
-                    <canvas id="inningScoreChart"></canvas>
+                        <div>
+                            <span class="section-eyebrow">
+                                RUN FLOW
+                            </span>
 
-                </article>
-
-
-                <article class="dashboard-card chart-card">
-
-                    <div class="card-header">
-                        <h2>타석 결과 분포</h2>
-                    </div>
-
-                    <canvas id="resultChart"></canvas>
-
-                </article>
-
-
-                <article class="dashboard-card chart-card">
-
-                    <div class="card-header">
-                        <h2>오늘의 핵심 선수</h2>
-                    </div>
-
-                    <div id="mvpCard" class="mvp-card">
-
-                        <div class="empty-state">
-                            경기 기록이 없습니다.
+                            <h2>
+                                이닝별 득점 흐름
+                            </h2>
                         </div>
 
+                    </div>
+
+                    <div class="chart-area">
+                        <canvas id="inningScoreChart"></canvas>
+                    </div>
+
+                </article>
+
+
+                <article class="chart-card">
+
+                    <div class="section-heading">
+
+                        <div>
+                            <span class="section-eyebrow">
+                                RESULT DISTRIBUTION
+                            </span>
+
+                            <h2>
+                                타석 결과 분포
+                            </h2>
+                        </div>
+
+                    </div>
+
+                    <div class="chart-area">
+                        <canvas id="resultChart"></canvas>
                     </div>
 
                 </article>
 
             </section>
 
+
+            <!-- =============================================
+                 MVP
+            ============================================== -->
+
+            <section class="mvp-section">
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-eyebrow">
+                            PLAYER OF THE GAME
+                        </span>
+
+                        <h2>
+                            경기 MVP
+                        </h2>
+                    </div>
+
+                </div>
+
+                <div id="mvpCard">
+
+                    <div class="empty-state">
+                        경기 기록이 없습니다.
+                    </div>
+
+                </div>
+
+            </section>
+
         </main>
 
     </div>
-
-
-    <!-- 차트 라이브러리 -->
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-    <!-- 메인 기능 -->
-
-    <script src="app.js"></script>
-
-
-    <!-- 유튜브 플레이어 -->
-
-    <script src="https://www.youtube.com/iframe_api"></script>
 
 </body>
 </html>
