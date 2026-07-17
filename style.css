@@ -1357,3 +1357,17 @@ th {
         font-size: 13px;
     }
 }
+.tee-mode {
+    color: #facc15;
+    font-weight: 900;
+}
+
+.result-buttons button.disabled-result {
+    opacity: 0.3;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+.base {
+    cursor: pointer;
+}
