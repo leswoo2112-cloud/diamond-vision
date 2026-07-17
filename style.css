@@ -1,45 +1,51 @@
 /* =========================================================
    DiamondVision 1.0
-   MLB 스타일 야구 전력분석 대시보드
+   전체 스타일
+========================================================= */
+
+
+/* =========================================================
+   기본 설정
 ========================================================= */
 
 :root {
-    --bg-main: #050b14;
-    --bg-deep: #020711;
-    --bg-panel: #0b1423;
-    --bg-panel-light: #111d2f;
-    --bg-card: rgba(12, 24, 41, 0.96);
+    --background: #050b18;
+    --background-soft: #081120;
+    --panel: #0b1728;
+    --panel-soft: #0f1c2f;
+    --panel-light: #132238;
 
     --border: rgba(148, 163, 184, 0.18);
     --border-strong: rgba(148, 163, 184, 0.3);
 
-    --text-main: #f8fafc;
-    --text-sub: #94a3b8;
-    --text-dark: #64748b;
+    --text: #f8fafc;
+    --text-soft: #cbd5e1;
+    --text-muted: #7f8da3;
 
-    --red: #ef3340;
-    --red-dark: #9f1422;
-    --red-soft: rgba(239, 51, 64, 0.16);
+    --red: #ff3b4d;
+    --red-dark: #c8102e;
+    --red-soft: rgba(255, 59, 77, 0.16);
 
     --blue: #2563eb;
-    --blue-dark: #123c8c;
+    --blue-dark: #123f9b;
     --blue-soft: rgba(37, 99, 235, 0.16);
 
     --green: #22c55e;
     --yellow: #facc15;
     --orange: #f97316;
+    --purple: #a855f7;
 
-    --shadow:
-        0 18px 50px rgba(0, 0, 0, 0.32);
+    --radius-small: 12px;
+    --radius-medium: 18px;
+    --radius-large: 26px;
 
-    --radius-large: 20px;
-    --radius-medium: 14px;
-    --radius-small: 10px;
+    --sidebar-width: 250px;
+    --header-height: 88px;
 }
 
 
 /* =========================================================
-   기본 설정
+   리셋
 ========================================================= */
 
 * {
@@ -52,33 +58,32 @@ html {
 
 body {
     margin: 0;
-    min-width: 320px;
+
+    min-width: 1180px;
+    min-height: 100vh;
+
+    overflow-x: auto;
 
     background:
         radial-gradient(
-            circle at 10% 10%,
-            rgba(37, 99, 235, 0.1),
-            transparent 28%
-        ),
-        radial-gradient(
-            circle at 90% 20%,
-            rgba(239, 51, 64, 0.09),
-            transparent 26%
+            circle at top right,
+            rgba(37, 99, 235, 0.08),
+            transparent 30%
         ),
         linear-gradient(
             180deg,
-            #06101e 0%,
-            #030813 100%
+            #040915 0%,
+            #06101d 100%
         );
 
-    color: var(--text-main);
+    color: var(--text);
 
     font-family:
         -apple-system,
         BlinkMacSystemFont,
         "Pretendard",
         "Noto Sans KR",
-        Arial,
+        "Segoe UI",
         sans-serif;
 }
 
@@ -89,43 +94,49 @@ select {
 }
 
 button {
-    border: 0;
-    cursor: pointer;
+    color: inherit;
 }
 
+button,
 input,
 select {
-    color: var(--text-main);
-
-    border:
-        1px solid var(--border-strong);
-
-    outline: none;
-
-    background:
-        rgba(15, 23, 42, 0.86);
-
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 
-input:focus,
-select:focus {
-    border-color:
-        rgba(59, 130, 246, 0.78);
-
-    box-shadow:
-        0 0 0 3px
-        rgba(59, 130, 246, 0.14);
-
-    background:
-        rgba(15, 23, 42, 1);
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 2px;
 }
 
 input::placeholder {
-    color: #64748b;
+    color: #627087;
+}
+
+
+/* =========================================================
+   공통 스크롤바
+========================================================= */
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #07101e;
+}
+
+::-webkit-scrollbar-thumb {
+    border: 2px solid #07101e;
+    border-radius: 999px;
+
+    background: #26364e;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #354965;
 }
 
 
@@ -136,168 +147,196 @@ input::placeholder {
 .top-header {
     position: sticky;
     top: 0;
-    z-index: 50;
-
-    min-height: 78px;
+    z-index: 100;
 
     display: grid;
-    grid-template-columns: 280px 1fr auto;
-    align-items: center;
-    gap: 20px;
+    grid-template-columns:
+        minmax(300px, 1fr)
+        auto
+        minmax(260px, 1fr);
 
-    padding: 12px 24px;
+    align-items: center;
+    gap: 24px;
+
+    min-height: var(--header-height);
+
+    padding:
+        env(safe-area-inset-top)
+        28px
+        0;
 
     border-bottom:
         1px solid var(--border);
 
     background:
-        rgba(3, 8, 19, 0.94);
+        rgba(4, 10, 23, 0.96);
 
     backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 
 .brand-area {
     display: flex;
     align-items: center;
-    gap: 13px;
+    gap: 14px;
 }
 
-.brand-logo {
-    width: 48px;
-    height: 48px;
-
+.brand-icon {
     display: grid;
     place-items: center;
 
-    border:
-        1px solid rgba(239, 51, 64, 0.56);
+    width: 54px;
+    height: 54px;
 
-    border-radius: 14px;
+    flex-shrink: 0;
+
+    border:
+        1px solid rgba(255, 59, 77, 0.5);
+    border-radius: 17px;
 
     background:
         linear-gradient(
             145deg,
-            rgba(239, 51, 64, 0.22),
-            rgba(37, 99, 235, 0.12)
+            rgba(255, 59, 77, 0.22),
+            rgba(255, 59, 77, 0.03)
         );
 
-    font-size: 27px;
-
     box-shadow:
-        inset 0 0 18px
-        rgba(255, 255, 255, 0.04);
+        0 0 28px rgba(255, 59, 77, 0.13);
+
+    font-size: 27px;
 }
 
-.brand-area h1 {
+.brand-text h1 {
     margin: 0;
 
-    font-size: 21px;
+    font-size: 24px;
     font-weight: 900;
     letter-spacing: 0.6px;
 }
 
-.brand-area p {
-    margin: 3px 0 0;
+.brand-text p {
+    margin: 4px 0 0;
 
     color: var(--red);
 
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1.6px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 2.4px;
 }
 
-.top-nav {
+.top-navigation {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 22px;
 }
 
-.nav-button {
+.top-nav-button {
     position: relative;
 
-    padding: 15px 18px;
+    padding: 30px 10px 27px;
 
-    color: var(--text-sub);
-
-    border-radius: 10px;
+    border: 0;
 
     background: transparent;
 
-    font-weight: 700;
+    color: #96a3b6;
+
+    font-size: 15px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
-.nav-button:hover {
-    color: var(--text-main);
-
-    background:
-        rgba(148, 163, 184, 0.08);
+.top-nav-button:hover {
+    color: var(--text);
+    transform: translateY(-1px);
 }
 
-.nav-button.active {
-    color: white;
+.top-nav-button.active {
+    color: var(--text);
 }
 
-.nav-button.active::after {
+.top-nav-button.active::after {
     content: "";
 
     position: absolute;
-    left: 16px;
-    right: 16px;
-    bottom: 3px;
+    left: 10px;
+    right: 10px;
+    bottom: 17px;
 
-    height: 3px;
+    height: 4px;
 
     border-radius: 999px;
 
-    background:
-        linear-gradient(
-            90deg,
-            var(--red),
-            #ff6670
-        );
+    background: var(--red);
+
+    box-shadow:
+        0 0 16px rgba(255, 59, 77, 0.45);
 }
 
 .header-status {
     display: flex;
     align-items: center;
-    gap: 14px;
+    justify-content: flex-end;
+    gap: 18px;
 
-    color: var(--text-sub);
+    color: #96a3b6;
 
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 700;
 }
 
-.live-status {
+.live-badge {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
 
-    padding: 8px 11px;
+    padding: 10px 15px;
 
     border:
-        1px solid rgba(34, 197, 94, 0.28);
-
+        1px solid rgba(34, 197, 94, 0.3);
     border-radius: 999px;
 
     background:
         rgba(34, 197, 94, 0.08);
 
-    color: #86efac;
+    color: #5ce88b;
 
-    font-weight: 800;
+    font-weight: 900;
 }
 
-.live-status i {
-    width: 8px;
-    height: 8px;
+.live-dot {
+    width: 9px;
+    height: 9px;
 
     border-radius: 50%;
 
     background: var(--green);
 
     box-shadow:
-        0 0 12px var(--green);
+        0 0 12px rgba(34, 197, 94, 0.9);
+
+    animation:
+        livePulse 1.4s infinite;
+}
+
+@keyframes livePulse {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.45;
+        transform: scale(0.82);
+    }
 }
 
 
@@ -307,10 +346,12 @@ input::placeholder {
 
 .app-layout {
     display: grid;
-    grid-template-columns: 235px minmax(0, 1fr);
+    grid-template-columns:
+        var(--sidebar-width)
+        minmax(0, 1fr);
 
     min-height:
-        calc(100vh - 78px);
+        calc(100vh - var(--header-height));
 }
 
 
@@ -320,158 +361,255 @@ input::placeholder {
 
 .sidebar {
     position: sticky;
-    top: 78px;
+    top: var(--header-height);
 
     align-self: start;
 
     height:
-        calc(100vh - 78px);
+        calc(100vh - var(--header-height));
 
     overflow-y: auto;
 
-    padding: 20px 14px 30px;
+    padding: 24px 15px 36px;
 
     border-right:
         1px solid var(--border);
 
     background:
-        linear-gradient(
-            180deg,
-            rgba(4, 11, 23, 0.98),
-            rgba(2, 7, 17, 0.96)
-        );
+        rgba(4, 11, 23, 0.94);
 }
 
-.side-menu-group {
-    margin-bottom: 28px;
+.sidebar-section {
+    margin-bottom: 30px;
 }
 
-.side-title {
+.sidebar-title {
     margin:
-        0 0 9px 10px;
+        0
+        12px
+        10px;
 
-    color: #64748b;
+    color: #53617a;
 
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 800;
-    letter-spacing: 1.1px;
+    letter-spacing: 0.6px;
 }
 
-.side-menu {
-    width: 100%;
-
+.sidebar-button {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 13px;
 
-    margin-bottom: 5px;
-    padding: 12px 13px;
+    width: 100%;
 
-    color: var(--text-sub);
+    margin-bottom: 6px;
+    padding: 14px 16px;
 
-    border-radius: 11px;
+    border: 0;
+    border-radius: 12px;
 
     background: transparent;
 
-    text-align: left;
+    color: #93a1b4;
 
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 750;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
-.side-menu span {
-    width: 23px;
+.sidebar-button span {
+    display: inline-grid;
+    place-items: center;
 
-    color: #cbd5e1;
+    width: 22px;
 
-    text-align: center;
+    color: #a6b2c2;
 
-    font-size: 17px;
+    font-size: 16px;
 }
 
-.side-menu:hover {
-    color: white;
-
+.sidebar-button:hover {
     background:
-        rgba(148, 163, 184, 0.08);
+        rgba(148, 163, 184, 0.06);
+
+    color: var(--text);
+
+    transform: translateX(2px);
 }
 
-.side-menu.active {
-    color: white;
+.sidebar-button.active {
+    position: relative;
 
     background:
         linear-gradient(
             90deg,
-            rgba(239, 51, 64, 0.22),
-            rgba(239, 51, 64, 0.08)
+            rgba(255, 59, 77, 0.19),
+            rgba(255, 59, 77, 0.07)
         );
 
+    color: var(--text);
+}
+
+.sidebar-button.active::before {
+    content: "";
+
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 0;
+
+    width: 4px;
+
+    border-radius: 0 999px 999px 0;
+
+    background: var(--red);
+
     box-shadow:
-        inset 3px 0 0 var(--red);
+        0 0 16px rgba(255, 59, 77, 0.55);
 }
 
 
 /* =========================================================
-   메인 콘텐츠
+   메인
 ========================================================= */
 
 .main-content {
-    width: 100%;
     min-width: 0;
 
-    padding: 18px;
-
-    overflow: hidden;
+    padding: 22px 22px 56px;
 }
 
 
 /* =========================================================
-   공통 카드
+   공통 패널
 ========================================================= */
 
-.dashboard-card {
-    min-width: 0;
-
+.scoreboard-card,
+.current-lineup-bar,
+.lineup-panel,
+.video-panel,
+.record-panel,
+.table-panel,
+.stats-panel,
+.chart-card,
+.mvp-section {
     border:
         1px solid var(--border);
-
-    border-radius:
-        var(--radius-large);
+    border-radius: var(--radius-large);
 
     background:
         linear-gradient(
             145deg,
-            rgba(13, 26, 45, 0.98),
-            rgba(7, 16, 30, 0.98)
+            rgba(13, 27, 46, 0.98),
+            rgba(8, 18, 33, 0.98)
         );
 
-    box-shadow: var(--shadow);
-
-    overflow: hidden;
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.15);
 }
 
-.card-header {
+.section-heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 18px;
 
-    margin-bottom: 18px;
+    margin-bottom: 22px;
 }
 
-.card-header h2 {
-    margin: 3px 0 0;
+.section-heading h2 {
+    margin: 5px 0 0;
 
-    font-size: 19px;
-    font-weight: 850;
+    font-size: 21px;
+    line-height: 1.25;
 }
 
-.section-label {
+.section-eyebrow {
     color: var(--red);
 
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 900;
-    letter-spacing: 1.3px;
+    letter-spacing: 2px;
+}
+
+.small-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--text-muted);
+
+    font-size: 11px;
+    font-weight: 850;
+    letter-spacing: 0.5px;
+}
+
+.secondary-button,
+.primary-small-button {
+    min-height: 42px;
+
+    padding: 0 16px;
+
+    border-radius: 12px;
+
+    font-size: 13px;
+    font-weight: 850;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.secondary-button {
+    border:
+        1px solid var(--border-strong);
+
+    background:
+        rgba(148, 163, 184, 0.07);
+
+    color: var(--text-soft);
+}
+
+.secondary-button:hover {
+    border-color:
+        rgba(148, 163, 184, 0.55);
+
+    background:
+        rgba(148, 163, 184, 0.12);
+
+    transform: translateY(-1px);
+}
+
+.primary-small-button {
+    border:
+        1px solid rgba(255, 59, 77, 0.58);
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4052,
+            #c70c2a
+        );
+
+    color: white;
+
+    box-shadow:
+        0 10px 25px rgba(255, 59, 77, 0.18);
+}
+
+.primary-small-button:hover {
+    transform: translateY(-1px);
 }
 
 
@@ -482,60 +620,46 @@ input::placeholder {
 .scoreboard-card {
     display: grid;
     grid-template-columns:
-        minmax(250px, 1fr)
-        310px
-        minmax(250px, 1fr);
-
-    min-height: 138px;
-
-    margin-bottom: 18px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius:
-        var(--radius-large);
+        minmax(300px, 1fr)
+        340px
+        minmax(300px, 1fr);
 
     overflow: hidden;
 
-    background:
-        linear-gradient(
-            90deg,
-            rgba(101, 17, 28, 0.72),
-            rgba(8, 18, 34, 0.98) 44%,
-            rgba(10, 32, 76, 0.72)
-        );
-
-    box-shadow: var(--shadow);
+    margin-bottom: 18px;
 }
 
 .team-score {
-    min-width: 0;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 22px;
+    gap: 24px;
 
-    padding: 24px 30px;
+    min-height: 160px;
+
+    padding: 28px 34px;
 }
 
-.home-team {
+.home-team-score {
     background:
         linear-gradient(
-            120deg,
-            rgba(159, 20, 34, 0.35),
-            transparent
+            110deg,
+            rgba(200, 16, 46, 0.54),
+            rgba(112, 12, 34, 0.12)
         );
 }
 
-.away-team {
+.away-team-score {
     background:
         linear-gradient(
-            240deg,
-            rgba(37, 99, 235, 0.32),
-            transparent
+            250deg,
+            rgba(37, 99, 235, 0.58),
+            rgba(18, 63, 155, 0.1)
         );
+}
+
+.team-score-info {
+    min-width: 0;
 }
 
 .team-label {
@@ -543,48 +667,45 @@ input::placeholder {
 
     margin-bottom: 7px;
 
-    color: #f87171;
+    color:
+        rgba(255, 255, 255, 0.72);
 
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 900;
-    letter-spacing: 1px;
-}
-
-.away-team .team-label {
-    color: #60a5fa;
+    letter-spacing: 1.3px;
 }
 
 .team-name-input {
     width: 100%;
-    max-width: 210px;
 
-    padding: 5px 0;
+    padding: 0;
 
     border: 0;
-    border-bottom:
-        1px solid transparent;
-
-    border-radius: 0;
 
     background: transparent;
 
     color: white;
 
-    font-size: 20px;
-    font-weight: 900;
+    font-size: 21px;
+    font-weight: 850;
 }
 
 .team-name-input:focus {
-    border-bottom-color:
-        rgba(255, 255, 255, 0.32);
+    outline: none;
 
-    box-shadow: none;
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.4);
 }
 
-.team-score strong {
-    font-size: 54px;
-    font-weight: 950;
+.score-number {
+    flex-shrink: 0;
+
+    font-size: 64px;
     line-height: 1;
+    font-weight: 950;
+
+    text-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 .game-status-center {
@@ -593,73 +714,107 @@ input::placeholder {
     align-items: center;
     justify-content: center;
 
-    padding: 15px 20px;
+    min-height: 160px;
+
+    padding: 20px 22px;
 
     border-left:
         1px solid var(--border);
-
     border-right:
         1px solid var(--border);
 
     background:
-        rgba(5, 13, 26, 0.82);
+        rgba(3, 10, 22, 0.72);
 }
 
-.inning-row {
+.inning-control {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 18px;
+
+    margin-bottom: 8px;
 }
 
-.inning-row button {
-    width: 28px;
-    height: 28px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 8px;
-
-    background:
-        rgba(148, 163, 184, 0.08);
-
-    color: var(--text-sub);
-}
-
-.inning-row strong {
+.inning-control strong {
     min-width: 74px;
 
+    font-size: 20px;
     text-align: center;
-
-    font-size: 18px;
 }
+
+.inning-button {
+    display: grid;
+    place-items: center;
+
+    width: 38px;
+    height: 38px;
+
+    border:
+        1px solid var(--border-strong);
+    border-radius: 11px;
+
+    background:
+        rgba(148, 163, 184, 0.07);
+
+    color: var(--text-soft);
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.inning-button:hover {
+    background:
+        rgba(148, 163, 184, 0.14);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   베이스 다이아몬드
+========================================================= */
 
 .base-diamond {
     position: relative;
 
-    width: 64px;
-    height: 45px;
+    width: 86px;
+    height: 55px;
 
-    margin: 5px 0;
+    margin: 3px auto 9px;
 }
 
 .base {
     position: absolute;
 
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
+
+    border:
+        2px solid #53627a;
+
+    background:
+        #0b1526;
 
     transform: rotate(45deg);
 
-    border:
-        2px solid #475569;
-
-    background: #172033;
+    cursor: pointer;
 
     transition:
         background 0.2s ease,
         border-color 0.2s ease,
-        box-shadow 0.2s ease;
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.base:hover {
+    border-color: #8795aa;
+
+    transform:
+        rotate(45deg)
+        scale(1.08);
 }
 
 .base.active {
@@ -668,84 +823,352 @@ input::placeholder {
     background:
         linear-gradient(
             145deg,
-            #fde047,
-            #f59e0b
+            #ffe45e,
+            #d9a800
         );
 
     box-shadow:
-        0 0 15px
-        rgba(250, 204, 21, 0.46);
+        0 0 18px rgba(250, 204, 21, 0.58);
 }
 
-.base-two {
+.base-second {
     top: 0;
-    left: 23px;
+    left: 31px;
 }
 
-.base-three {
-    top: 21px;
-    left: 3px;
+.base-third {
+    top: 25px;
+    left: 7px;
 }
 
-.base-one {
-    top: 21px;
-    right: 3px;
+.base-first {
+    top: 25px;
+    right: 7px;
 }
 
-.game-counts {
-    display: flex;
-    align-items: center;
-    gap: 9px;
+
+/* =========================================================
+   BSO
+========================================================= */
+
+.count-board {
+    display: grid;
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 8px;
+
+    width: 100%;
+    max-width: 220px;
 }
 
-.game-counts div {
-    min-width: 52px;
-
+.count-item {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 7px;
 
-    padding: 6px 8px;
+    min-height: 40px;
 
     border:
-        1px solid var(--border);
-
-    border-radius: 9px;
+        1px solid var(--border-strong);
+    border-radius: 12px;
 
     background:
-        rgba(15, 23, 42, 0.7);
+        rgba(148, 163, 184, 0.05);
 }
 
-.game-counts span {
-    color: var(--text-sub);
+.count-item span {
+    color: #91a0b5;
 
     font-size: 12px;
     font-weight: 900;
 }
 
-.game-counts div:nth-child(1) b {
-    color: var(--green);
+.count-item strong {
+    font-size: 17px;
 }
 
-.game-counts div:nth-child(2) b {
-    color: var(--yellow);
+.ball-count-item strong {
+    color: #52e384;
 }
 
-.game-counts div:nth-child(3) b {
-    color: var(--red);
+.strike-count-item strong {
+    color: #facc15;
+}
+
+.out-count-item strong {
+    color: #ff5362;
 }
 
 
 /* =========================================================
-   영상 + 기록 레이아웃
+   현재 타순 바
+========================================================= */
+
+.current-lineup-bar {
+    display: grid;
+    grid-template-columns:
+        1.1fr
+        1fr
+        1fr
+        auto;
+
+    align-items: center;
+    gap: 18px;
+
+    margin-bottom: 18px;
+    padding: 18px 22px;
+
+    border-radius: 20px;
+}
+
+.current-lineup-bar strong {
+    display: block;
+
+    overflow: hidden;
+
+    color: var(--text);
+
+    font-size: 15px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.current-team-box,
+.current-batter-box,
+.next-batter-box {
+    min-width: 0;
+}
+
+.current-batter-box strong {
+    color: #ff6070;
+}
+
+.lineup-open-button {
+    min-height: 46px;
+
+    padding: 0 18px;
+
+    border:
+        1px solid rgba(255, 59, 77, 0.45);
+    border-radius: 13px;
+
+    background:
+        rgba(255, 59, 77, 0.11);
+
+    color: #ff6978;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.lineup-open-button:hover {
+    background:
+        rgba(255, 59, 77, 0.19);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   라인업 패널
+========================================================= */
+
+.lineup-panel {
+    margin-bottom: 18px;
+    padding: 24px;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.lineup-panel.hidden {
+    display: none;
+}
+
+.lineup-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lineup-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+.lineup-team-card {
+    overflow: hidden;
+
+    border:
+        1px solid var(--border);
+    border-radius: 19px;
+
+    background:
+        rgba(3, 11, 23, 0.48);
+}
+
+.home-lineup-card {
+    box-shadow:
+        inset 4px 0 0 rgba(255, 59, 77, 0.8);
+}
+
+.away-lineup-card {
+    box-shadow:
+        inset 4px 0 0 rgba(37, 99, 235, 0.9);
+}
+
+.lineup-team-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 18px 18px 15px;
+
+    border-bottom:
+        1px solid var(--border);
+}
+
+.lineup-team-header h3 {
+    margin: 2px 0 0;
+
+    font-size: 18px;
+}
+
+.current-order-badge {
+    padding: 8px 11px;
+
+    border:
+        1px solid var(--border);
+    border-radius: 999px;
+
+    background:
+        rgba(148, 163, 184, 0.06);
+
+    color: var(--text-soft);
+
+    font-size: 11px;
+    font-weight: 850;
+}
+
+.lineup-list {
+    padding: 10px;
+}
+
+.lineup-row {
+    display: grid;
+    grid-template-columns:
+        38px
+        minmax(0, 1fr)
+        115px;
+
+    align-items: center;
+    gap: 9px;
+
+    margin-bottom: 7px;
+    padding: 7px;
+
+    border:
+        1px solid transparent;
+    border-radius: 12px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.lineup-row:last-child {
+    margin-bottom: 0;
+}
+
+.lineup-row:hover {
+    border-color:
+        rgba(148, 163, 184, 0.14);
+
+    background:
+        rgba(148, 163, 184, 0.04);
+}
+
+.lineup-row.current-batter-row {
+    border-color:
+        rgba(255, 59, 77, 0.55);
+
+    background:
+        rgba(255, 59, 77, 0.1);
+
+    box-shadow:
+        0 0 20px rgba(255, 59, 77, 0.08);
+}
+
+.batting-order {
+    display: grid;
+    place-items: center;
+
+    width: 34px;
+    height: 34px;
+
+    border:
+        1px solid var(--border-strong);
+    border-radius: 10px;
+
+    background:
+        rgba(148, 163, 184, 0.06);
+
+    color: var(--text-soft);
+
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.lineup-player-input,
+.position-select {
+    width: 100%;
+    min-width: 0;
+    height: 40px;
+
+    border:
+        1px solid var(--border);
+    border-radius: 10px;
+
+    background:
+        rgba(6, 15, 29, 0.85);
+
+    color: var(--text);
+
+    font-size: 13px;
+}
+
+.lineup-player-input {
+    padding: 0 12px;
+}
+
+.position-select {
+    padding: 0 8px;
+
+    color: var(--text-soft);
+}
+
+
+/* =========================================================
+   영상·기록 2열
 ========================================================= */
 
 .analysis-grid {
     display: grid;
     grid-template-columns:
-        minmax(0, 1.05fr)
-        minmax(440px, 0.95fr);
+        minmax(0, 1fr)
+        minmax(560px, 0.98fr);
 
     gap: 18px;
 
@@ -754,7 +1177,140 @@ input::placeholder {
 
 .video-panel,
 .record-panel {
-    padding: 20px;
+    min-width: 0;
+
+    padding: 24px;
+}
+
+
+/* =========================================================
+   유튜브·파일 입력
+========================================================= */
+
+.youtube-row {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        170px;
+
+    gap: 10px;
+
+    margin-bottom: 12px;
+}
+
+.youtube-row input,
+.player-input-grid input,
+.player-input-grid select,
+.situation-grid input {
+    width: 100%;
+    min-width: 0;
+    height: 48px;
+
+    padding: 0 14px;
+
+    border:
+        1px solid var(--border-strong);
+    border-radius: 13px;
+
+    background:
+        rgba(5, 14, 28, 0.86);
+
+    color: var(--text);
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.youtube-row input:focus,
+.player-input-grid input:focus,
+.player-input-grid select:focus,
+.situation-grid input:focus,
+.lineup-player-input:focus,
+.position-select:focus {
+    border-color:
+        rgba(255, 59, 77, 0.72);
+
+    background:
+        rgba(8, 19, 36, 1);
+
+    outline: none;
+}
+
+.youtube-load-button {
+    border: 0;
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4052,
+            #c90c2c
+        );
+
+    color: white;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 12px 26px rgba(255, 59, 77, 0.17);
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
+}
+
+.youtube-load-button:hover {
+    filter: brightness(1.07);
+    transform: translateY(-1px);
+}
+
+.file-select-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 14px;
+}
+
+.video-file-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 0 15px;
+
+    border:
+        1px solid var(--border-strong);
+    border-radius: 12px;
+
+    background:
+        rgba(148, 163, 184, 0.07);
+
+    color: var(--text-soft);
+
+    font-size: 13px;
+    font-weight: 850;
+
+    cursor: pointer;
+}
+
+.video-file-button input {
+    display: none;
+}
+
+#videoFileName {
+    overflow: hidden;
+
+    color: var(--text-muted);
+
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 
@@ -762,111 +1318,42 @@ input::placeholder {
    영상 영역
 ========================================================= */
 
-.youtube-row {
-    display: grid;
-    grid-template-columns:
-        minmax(0, 1fr)
-        auto;
+.video-stage {
+    position: relative;
 
-    gap: 10px;
+    overflow: hidden;
 
-    margin-bottom: 12px;
-}
-
-.youtube-row input {
-    width: 100%;
-
-    padding: 12px 13px;
-
-    border-radius: 11px;
-}
-
-.youtube-row button {
-    padding: 0 16px;
-
-    border-radius: 11px;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--red),
-            var(--red-dark)
-        );
-
-    color: white;
-
-    font-weight: 850;
-}
-
-.youtube-row button:hover {
-    filter: brightness(1.12);
-}
-
-.youtube-player-wrap,
-#video {
     width: 100%;
     aspect-ratio: 16 / 9;
 
     border:
         1px solid var(--border);
+    border-radius: 18px;
 
-    border-radius: 15px;
+    background: #000;
+}
+
+.video-stage video,
+.youtube-player-wrap,
+.youtube-player-wrap iframe {
+    width: 100%;
+    height: 100%;
+}
+
+.video-stage video {
+    display: block;
+
+    object-fit: contain;
 
     background: #000;
 }
 
 .youtube-player-wrap {
-    overflow: hidden;
+    position: absolute;
+    inset: 0;
 }
 
-.youtube-player-wrap iframe,
-#youtubePlayer {
-    width: 100% !important;
-    height: 100% !important;
-    border: 0;
-}
-
-#video {
-    display: block;
-
-    object-fit: contain;
-}
-
-.file-upload-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    margin: 12px 0;
-
-    color: var(--text-sub);
-
-    font-size: 13px;
-}
-
-.file-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 9px 13px;
-
-    border:
-        1px solid var(--border-strong);
-
-    border-radius: 10px;
-
-    background:
-        rgba(148, 163, 184, 0.1);
-
-    color: white;
-
-    font-weight: 800;
-
-    cursor: pointer;
-}
-
-.file-button input {
+.youtube-player-wrap[hidden] {
     display: none;
 }
 
@@ -875,374 +1362,460 @@ input::placeholder {
     grid-template-columns:
         repeat(6, minmax(0, 1fr));
 
-    gap: 8px;
+    gap: 9px;
 
-    margin-top: 12px;
+    margin-top: 14px;
 }
 
 .video-controls button {
-    padding: 10px 6px;
+    min-height: 48px;
 
     border:
-        1px solid var(--border);
-
-    border-radius: 10px;
+        1px solid var(--border-strong);
+    border-radius: 12px;
 
     background:
-        rgba(148, 163, 184, 0.08);
+        rgba(148, 163, 184, 0.07);
 
-    color: #e2e8f0;
+    color: var(--text-soft);
 
-    font-size: 13px;
-    font-weight: 750;
+    font-weight: 850;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
 .video-controls button:hover {
-    border-color:
-        rgba(59, 130, 246, 0.42);
-
     background:
-        rgba(37, 99, 235, 0.15);
+        rgba(148, 163, 184, 0.14);
+
+    transform: translateY(-1px);
 }
 
 
 /* =========================================================
-   기록 입력
+   선수 입력
 ========================================================= */
-
-.reset-button {
-    padding: 9px 12px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 10px;
-
-    background:
-        rgba(148, 163, 184, 0.08);
-
-    color: var(--text-sub);
-
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.reset-button:hover {
-    color: white;
-
-    background:
-        rgba(148, 163, 184, 0.16);
-}
 
 .player-input-grid {
     display: grid;
     grid-template-columns:
-        1fr 1fr 0.7fr;
+        minmax(0, 1fr)
+        minmax(0, 1fr)
+        130px;
 
-    gap: 10px;
+    gap: 12px;
+
+    margin-bottom: 14px;
 }
 
 .player-input-grid label,
 .situation-grid label {
-    color: var(--text-sub);
+    color: #93a2b7;
 
     font-size: 12px;
-    font-weight: 750;
+    font-weight: 800;
 }
 
 .player-input-grid input,
 .player-input-grid select,
 .situation-grid input {
-    width: 100%;
+    display: block;
 
     margin-top: 7px;
-    padding: 11px 12px;
-
-    border-radius: 10px;
 }
 
+
+/* =========================================================
+   투구 순서
+========================================================= */
+
 .pitch-sequence-box {
-    margin-top: 15px;
-    padding: 13px;
+    min-height: 112px;
+
+    margin-bottom: 20px;
+    padding: 15px;
 
     border:
         1px solid var(--border);
-
-    border-radius: 13px;
+    border-radius: 15px;
 
     background:
-        rgba(2, 8, 20, 0.42);
+        rgba(3, 11, 23, 0.52);
 }
 
-.mini-header {
+.pitch-sequence-heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    margin-bottom: 11px;
+    margin-bottom: 15px;
 }
 
-.mini-header h3 {
-    margin: 0;
-
+.pitch-sequence-heading strong {
     font-size: 14px;
 }
 
-.mini-header span {
-    color: var(--text-sub);
+.pitch-sequence-heading span {
+    color: var(--text-muted);
 
     font-size: 12px;
+    font-weight: 750;
 }
 
-.pitch-sequence {
-    min-height: 45px;
-
+#pitchSequence {
     display: flex;
-    align-items: center;
     flex-wrap: wrap;
-    gap: 7px;
+    gap: 8px;
 
-    color: var(--text-dark);
+    color: var(--text-muted);
 
     font-size: 13px;
 }
 
 .pitch-chip {
-    min-width: 34px;
-    height: 34px;
-
     display: inline-grid;
     place-items: center;
 
-    border-radius: 9px;
+    min-width: 34px;
+    height: 34px;
 
+    padding: 0 8px;
+
+    border:
+        1px solid var(--border-strong);
+    border-radius: 10px;
+
+    background:
+        rgba(148, 163, 184, 0.08);
+
+    color: white;
+
+    font-size: 12px;
     font-weight: 900;
 }
 
-.pitch-chip.strike,
-.pitch-chip.swing {
-    border:
-        1px solid rgba(250, 204, 21, 0.4);
+.pitch-chip.ball {
+    border-color:
+        rgba(34, 197, 94, 0.4);
 
     background:
-        rgba(250, 204, 21, 0.13);
+        rgba(34, 197, 94, 0.15);
 
-    color: var(--yellow);
+    color: #57e288;
 }
 
-.pitch-chip.ball {
-    border:
-        1px solid rgba(34, 197, 94, 0.42);
+.pitch-chip.strike {
+    border-color:
+        rgba(250, 204, 21, 0.42);
 
     background:
-        rgba(34, 197, 94, 0.13);
+        rgba(250, 204, 21, 0.14);
 
-    color: #86efac;
+    color: #ffe061;
 }
 
 .pitch-chip.foul {
-    border:
-        1px solid rgba(148, 163, 184, 0.35);
+    border-color:
+        rgba(148, 163, 184, 0.42);
 
     background:
-        rgba(148, 163, 184, 0.12);
+        rgba(148, 163, 184, 0.13);
 
     color: #cbd5e1;
 }
 
-.button-section {
-    margin-top: 16px;
+.pitch-chip.swing {
+    border-color:
+        rgba(255, 59, 77, 0.42);
+
+    background:
+        rgba(255, 59, 77, 0.15);
+
+    color: #ff7180;
 }
 
-.button-section h3 {
-    margin:
-        0 0 9px;
+
+/* =========================================================
+   기록 그룹
+========================================================= */
+
+.record-group {
+    margin-bottom: 20px;
+}
+
+.record-group h3 {
+    margin: 0 0 11px;
 
     font-size: 14px;
 }
 
-.record-button-grid {
-    display: grid;
-    gap: 8px;
-}
-
 .pitch-buttons {
+    display: grid;
     grid-template-columns:
         repeat(4, minmax(0, 1fr));
+
+    gap: 10px;
 }
 
-.result-buttons {
-    grid-template-columns:
-        repeat(4, minmax(0, 1fr));
-}
+.pitch-buttons button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 
-.action-button,
-.result-buttons button {
-    min-height: 48px;
+    min-height: 56px;
+
+    padding: 8px;
 
     border:
-        1px solid var(--border);
-
-    border-radius: 11px;
+        1px solid var(--border-strong);
+    border-radius: 13px;
 
     background:
-        linear-gradient(
-            145deg,
-            rgba(22, 34, 53, 0.98),
-            rgba(12, 24, 42, 0.98)
-        );
+        rgba(148, 163, 184, 0.06);
 
-    color: #e2e8f0;
+    color: var(--text-soft);
 
     font-size: 13px;
-    font-weight: 800;
+    font-weight: 850;
+
+    cursor: pointer;
 
     transition:
-        transform 0.15s ease,
-        border-color 0.15s ease,
-        background 0.15s ease;
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
 }
 
-.action-button:hover,
-.result-buttons button:hover {
-    transform: translateY(-1px);
-
+.pitch-buttons button:hover {
     border-color:
-        rgba(96, 165, 250, 0.5);
+        rgba(148, 163, 184, 0.55);
 
     background:
-        rgba(37, 99, 235, 0.14);
+        rgba(148, 163, 184, 0.12);
+
+    transform: translateY(-1px);
 }
 
-.action-button span {
-    display: inline-grid;
+.pitch-icon {
+    display: grid;
     place-items: center;
 
-    min-width: 27px;
-    height: 27px;
+    width: 30px;
+    height: 30px;
 
-    margin-right: 5px;
+    flex-shrink: 0;
 
     border-radius: 50%;
 
     font-size: 11px;
+    font-weight: 950;
 }
 
-.strike-button span {
+.strike-icon {
     background:
-        rgba(250, 204, 21, 0.13);
+        rgba(250, 204, 21, 0.15);
 
     color: var(--yellow);
 }
 
-.ball-button span {
+.ball-icon {
     background:
-        rgba(34, 197, 94, 0.13);
+        rgba(34, 197, 94, 0.15);
 
-    color: #86efac;
+    color: #4cdb7e;
 }
 
-.foul-button span {
+.foul-icon {
     background:
-        rgba(148, 163, 184, 0.14);
+        rgba(148, 163, 184, 0.15);
 
     color: #cbd5e1;
 }
 
-.swing-button span {
+.swing-icon {
     background:
-        rgba(239, 51, 64, 0.14);
+        rgba(255, 59, 77, 0.16);
 
-    color: #fda4af;
+    color: #ff7180;
+}
+
+
+/* =========================================================
+   결과 버튼
+========================================================= */
+
+.result-buttons {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+.result-buttons button {
+    min-height: 52px;
+
+    padding: 8px 10px;
+
+    border:
+        1px solid var(--border-strong);
+    border-radius: 13px;
+
+    background:
+        rgba(148, 163, 184, 0.055);
+
+    color: var(--text-soft);
+
+    font-size: 13px;
+    font-weight: 850;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.result-buttons button:hover {
+    border-color:
+        rgba(148, 163, 184, 0.58);
+
+    background:
+        rgba(148, 163, 184, 0.12);
+
+    transform: translateY(-1px);
 }
 
 .result-buttons .home-run-button {
     border-color:
-        rgba(239, 51, 64, 0.45);
+        rgba(255, 59, 77, 0.58);
 
     background:
         linear-gradient(
-            135deg,
-            rgba(239, 51, 64, 0.3),
-            rgba(159, 20, 34, 0.22)
+            145deg,
+            rgba(255, 59, 77, 0.29),
+            rgba(200, 16, 46, 0.13)
         );
 
-    color: #fecdd3;
+    color: #ff8b96;
 }
+
+.result-buttons button.disabled-result {
+    opacity: 0.28;
+
+    cursor: not-allowed;
+
+    filter: grayscale(1);
+
+    transform: none;
+}
+
+
+/* =========================================================
+   득점·타점·메모
+========================================================= */
 
 .situation-grid {
     display: grid;
     grid-template-columns:
-        110px 110px 1fr;
+        0.75fr
+        0.75fr
+        1.8fr;
 
-    gap: 10px;
+    gap: 12px;
 
-    margin-top: 16px;
+    margin-bottom: 14px;
 }
 
-.selected-result {
-    margin-top: 14px;
-    padding: 12px 13px;
+.selected-result-box {
+    min-height: 54px;
+
+    margin-bottom: 14px;
+    padding: 16px;
 
     border:
         1px solid var(--border);
-
-    border-radius: 11px;
+    border-radius: 14px;
 
     background:
-        rgba(2, 8, 20, 0.4);
+        rgba(3, 11, 23, 0.6);
 
-    color: var(--text-sub);
+    color: var(--text-soft);
 
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 800;
 }
 
-.selected-result strong {
-    margin-left: 6px;
+.selected-result-box::before {
+    content: "선택 결과: ";
 
-    color: white;
+    color: var(--text-muted);
+
+    font-weight: 700;
 }
 
-.save-plate-button {
+.selected-result-box.tee-mode {
+    border-color:
+        rgba(250, 204, 21, 0.4);
+
+    background:
+        rgba(250, 204, 21, 0.08);
+
+    color: #ffe266;
+}
+
+.save-record-button {
     width: 100%;
+    min-height: 58px;
 
-    margin-top: 12px;
-    padding: 14px;
-
-    border-radius: 12px;
+    border: 0;
+    border-radius: 15px;
 
     background:
         linear-gradient(
-            135deg,
-            #f43f4e,
-            #b51222
+            110deg,
+            #ff3f51,
+            #c70b2c
         );
 
     color: white;
 
     font-size: 15px;
-    font-weight: 900;
+    font-weight: 950;
+
+    cursor: pointer;
 
     box-shadow:
-        0 10px 24px
-        rgba(239, 51, 64, 0.24);
+        0 15px 30px rgba(255, 59, 77, 0.18);
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
 }
 
-.save-plate-button:hover {
-    filter: brightness(1.1);
+.save-record-button:hover {
+    filter: brightness(1.08);
+
+    transform: translateY(-1px);
 }
 
 
 /* =========================================================
-   하단 기록표
+   최근 기록 + 통계
 ========================================================= */
 
-.bottom-grid {
+.summary-grid {
     display: grid;
     grid-template-columns:
-        minmax(0, 1.45fr)
-        minmax(280px, 0.55fr)
-        minmax(280px, 0.55fr);
+        minmax(520px, 1.15fr)
+        minmax(280px, 0.78fr)
+        minmax(280px, 0.78fr);
 
     gap: 18px;
 
@@ -1251,48 +1824,440 @@ input::placeholder {
 
 .table-panel,
 .stats-panel {
-    padding: 20px;
+    min-width: 0;
+
+    padding: 22px;
 }
 
 .table-scroll {
-    width: 100%;
     overflow-x: auto;
+
+    border:
+        1px solid var(--border);
+    border-radius: 14px;
 }
 
-table {
+.record-table {
     width: 100%;
-    min-width: 840px;
+    min-width: 940px;
 
     border-collapse: collapse;
 
-    font-size: 12px;
+    background:
+        rgba(3, 11, 23, 0.34);
 }
 
-th,
-td {
-    padding: 11px 10px;
+.record-table th,
+.record-table td {
+    padding: 13px 12px;
 
-    border:
-        1px solid rgba(148, 163, 184, 0.12);
+    border-right:
+        1px solid var(--border);
+    border-bottom:
+        1px solid var(--border);
 
+    color: var(--text-soft);
+
+    font-size: 12px;
     text-align: center;
     white-space: nowrap;
 }
 
-th {
-    color: #cbd5e1;
+.record-table th:last-child,
+.record-table td:last-child {
+    border-right: 0;
+}
+
+.record-table th {
+    position: sticky;
+    top: 0;
 
     background:
-        rgba(15, 23, 42, 0.88);
+        #101c2f;
 
-    font-weight
-    @media (max-width: 680px) {
-    .main-content {
-        padding: 10px;
+    color: #a8b4c5;
+
+    font-weight: 900;
+}
+
+.record-table tbody tr {
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease;
+}
+
+.record-table tbody tr:hover {
+    background:
+        rgba(255, 59, 77, 0.055);
+}
+
+.empty-table-row td {
+    padding: 28px;
+
+    color: var(--text-muted);
+}
+
+
+/* =========================================================
+   통계 카드
+========================================================= */
+
+#batterStats,
+#pitcherStats {
+    display: grid;
+    gap: 12px;
+}
+
+.stat-player-card {
+    padding: 16px;
+
+    border:
+        1px solid var(--border);
+    border-radius: 15px;
+
+    background:
+        rgba(3, 11, 23, 0.45);
+}
+
+.stat-player-card h3 {
+    margin: 0 0 13px;
+
+    font-size: 17px;
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 8px 0;
+
+    border-bottom:
+        1px solid rgba(148, 163, 184, 0.08);
+}
+
+.stat-row:last-child {
+    border-bottom: 0;
+}
+
+.stat-row span {
+    color: var(--text-muted);
+
+    font-size: 12px;
+}
+
+.stat-row strong {
+    color: var(--text);
+
+    font-size: 13px;
+}
+
+.empty-state {
+    padding: 18px 0;
+
+    color: var(--text-muted);
+
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   차트
+========================================================= */
+
+.charts-grid {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.2fr)
+        minmax(360px, 0.8fr);
+
+    gap: 18px;
+
+    margin-bottom: 18px;
+}
+
+.chart-card {
+    min-width: 0;
+
+    padding: 22px;
+}
+
+.chart-area {
+    position: relative;
+
+    height: 340px;
+}
+
+
+/* =========================================================
+   MVP
+========================================================= */
+
+.mvp-section {
+    padding: 24px;
+}
+
+.mvp-player {
+    padding: 22px;
+
+    border:
+        1px solid rgba(255, 59, 77, 0.26);
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 59, 77, 0.12),
+            rgba(37, 99, 235, 0.08)
+        );
+}
+
+.mvp-label {
+    color: var(--red);
+
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: 1.6px;
+}
+
+.mvp-player h3 {
+    margin: 8px 0 3px;
+
+    font-size: 25px;
+}
+
+.mvp-player p {
+    margin: 0 0 18px;
+
+    color: var(--text-muted);
+
+    font-size: 13px;
+}
+
+.mvp-numbers {
+    display: grid;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+.mvp-numbers div {
+    padding: 14px;
+
+    border:
+        1px solid var(--border);
+    border-radius: 13px;
+
+    background:
+        rgba(3, 11, 23, 0.38);
+}
+
+.mvp-numbers span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--text-muted);
+
+    font-size: 11px;
+}
+
+.mvp-numbers strong {
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   태블릿 가로
+========================================================= */
+
+@media (max-width: 1450px) {
+    :root {
+        --sidebar-width: 215px;
     }
 
-    .brand-area h1 {
-        font-size: 17px;
+    body {
+        min-width: 1050px;
+    }
+
+    .top-header {
+        grid-template-columns:
+            minmax(260px, 1fr)
+            auto
+            minmax(210px, 1fr);
+
+        gap: 14px;
+
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .brand-text h1 {
+        font-size: 21px;
+    }
+
+    .brand-icon {
+        width: 48px;
+        height: 48px;
+
+        font-size: 24px;
+    }
+
+    .top-navigation {
+        gap: 10px;
+    }
+
+    .top-nav-button {
+        padding-left: 8px;
+        padding-right: 8px;
+
+        font-size: 14px;
+    }
+
+    .main-content {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .scoreboard-card {
+        grid-template-columns:
+            minmax(250px, 1fr)
+            300px
+            minmax(250px, 1fr);
+    }
+
+    .team-score {
+        padding-left: 25px;
+        padding-right: 25px;
+    }
+
+    .summary-grid {
+        grid-template-columns:
+            minmax(500px, 1.1fr)
+            minmax(260px, 0.75fr)
+            minmax(260px, 0.75fr);
+    }
+}
+
+
+/* =========================================================
+   작은 태블릿 가로
+========================================================= */
+
+@media (max-width: 1180px) {
+    body {
+        min-width: 980px;
+    }
+
+    .top-header {
+        grid-template-columns:
+            1fr
+            auto;
+
+        min-height: 78px;
+    }
+
+    .top-navigation {
+        display: none;
+    }
+
+    .header-status {
+        justify-self: end;
+    }
+
+    .app-layout {
+        grid-template-columns:
+            190px
+            minmax(0, 1fr);
+    }
+
+    .sidebar {
+        top: 78px;
+
+        height:
+            calc(100vh - 78px);
+    }
+
+    .scoreboard-card {
+        grid-template-columns:
+            1fr
+            280px
+            1fr;
+    }
+
+    .team-score {
+        min-height: 142px;
+
+        padding: 22px;
+    }
+
+    .score-number {
+        font-size: 54px;
+    }
+
+    .analysis-grid {
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(500px, 1fr);
+    }
+
+    .summary-grid {
+        grid-template-columns:
+            minmax(520px, 1.2fr)
+            minmax(260px, 0.8fr);
+    }
+
+    .summary-grid .stats-panel:last-child {
+        grid-column:
+            1 / -1;
+    }
+
+    .charts-grid {
+        grid-template-columns:
+            1fr;
+    }
+}
+
+
+/* =========================================================
+   모바일 대응
+========================================================= */
+
+@media (max-width: 760px) {
+    body {
+        min-width: 0;
+    }
+
+    .top-header {
+        position: relative;
+
+        grid-template-columns: 1fr;
+
+        padding: 13px 14px;
+    }
+
+    .header-status {
+        display: none;
+    }
+
+    .brand-area {
+        justify-content: center;
+    }
+
+    .app-layout {
+        display: block;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .main-content {
+        padding: 10px;
     }
 
     .scoreboard-card {
@@ -1309,29 +2274,27 @@ th {
     }
 
     .team-score {
-        min-height: 95px;
+        min-height: 100px;
+    }
+
+    .current-lineup-bar {
+        grid-template-columns: 1fr;
+    }
+
+    .lineup-grid,
+    .analysis-grid,
+    .summary-grid,
+    .charts-grid {
+        grid-template-columns: 1fr;
     }
 
     .youtube-row {
         grid-template-columns: 1fr;
     }
 
-    .youtube-row button {
-        min-height: 43px;
-    }
-
-    .video-controls {
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
-    }
-
     .player-input-grid,
     .situation-grid {
         grid-template-columns: 1fr;
-    }
-
-    .player-input-grid label:last-child {
-        grid-column: auto;
     }
 
     .pitch-buttons,
@@ -1340,34 +2303,37 @@ th {
             repeat(2, minmax(0, 1fr));
     }
 
+    .video-controls {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+    .lineup-row {
+        grid-template-columns:
+            38px
+            minmax(0, 1fr);
+    }
+
+    .position-select {
+        grid-column:
+            2 / 3;
+    }
+
+    .mvp-numbers {
+        grid-template-columns: 1fr;
+    }
+
     .video-panel,
     .record-panel,
     .table-panel,
     .stats-panel,
-    .chart-card {
-        padding: 14px;
+    .chart-card,
+    .lineup-panel,
+    .mvp-section {
+        padding: 15px;
     }
 
-    .top-header {
-        padding: 10px 14px;
+    .chart-area {
+        height: 280px;
     }
-
-    .nav-button {
-        padding: 11px 13px;
-        font-size: 13px;
-    }
-}
-.tee-mode {
-    color: #facc15;
-    font-weight: 900;
-}
-
-.result-buttons button.disabled-result {
-    opacity: 0.3;
-    cursor: not-allowed;
-    filter: grayscale(1);
-}
-
-.base {
-    cursor: pointer;
 }
