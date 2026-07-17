@@ -1,11 +1,15 @@
 /* =========================================================
    DiamondVision 1.0
-   야구 전력분석 메인 시스템
+   야구 경기·영상 전력분석 시스템
+
+   특별 규칙
+   - 볼 4개가 되면 볼넷 출루가 아니라 티바 타격으로 전환
+   - 티바 타격에서는 홈런 없음
 ========================================================= */
 
 
 /* =========================================================
-   기본 데이터
+   경기 상태
 ========================================================= */
 
 let currentInning = 1;
@@ -21,11 +25,13 @@ let baseState = {
     third: false
 };
 
+let homeScore = 0;
+let awayScore = 0;
+
 let currentPitchSequence = [];
 let selectedPlateResult = "";
 
-let homeScore = 0;
-let awayScore = 0;
+let isTeeMode = false;
 
 let plateAppearances = [];
 
@@ -40,12 +46,17 @@ let inningScores = {
 let inningScoreChart = null;
 let resultChart = null;
 
+let pendingYouTubeId = "";
+
+window.youtubePlayer = null;
+
 
 /* =========================================================
    DOM 요소
 ========================================================= */
 
-const video = document.getElementById("video");
+const video =
+    document.getElementById("video");
 
 const inningDisplay =
     document.getElementById("inningDisplay");
@@ -116,7 +127,7 @@ function setTodayDate() {
 
 
 /* =========================================================
-   이닝 표시
+   이닝 관리
 ========================================================= */
 
 function updateInningDisplay() {
@@ -155,7 +166,7 @@ window.nextInning = nextInning;
 
 
 /* =========================================================
-   볼카운트 표시
+   점수 및 카운트 표시
 ========================================================= */
 
 function updateCountDisplay() {
@@ -176,8 +187,21 @@ function updateCountDisplay() {
 }
 
 
+function updateScoreDisplay() {
+    if (homeScoreElement) {
+        homeScoreElement.textContent =
+            homeScore;
+    }
+
+    if (awayScoreElement) {
+        awayScoreElement.textContent =
+            awayScore;
+    }
+}
+
+
 /* =========================================================
-   주자 표시
+   베이스 상태
 ========================================================= */
 
 function updateBaseDisplay() {
@@ -204,6 +228,26 @@ function updateBaseDisplay() {
 }
 
 
+function toggleBase(baseName) {
+    if (baseName === "first") {
+        baseState.first =
+            !baseState.first;
+    }
+
+    if (baseName === "second") {
+        baseState.second =
+            !baseState.second;
+    }
+
+    if (baseName === "third") {
+        baseState.third =
+            !baseState.third;
+    }
+
+    updateBaseDisplay();
+}
+
+
 function getBaseText() {
     const bases = [];
 
@@ -226,10 +270,26 @@ function getBaseText() {
 
 
 /* =========================================================
-   투구 기록
+   투구 입력
 ========================================================= */
 
 function addPitch(type) {
+    if (isTeeMode) {
+        alert(
+            "현재 볼 4개로 티바 타격 대기 상태예요."
+        );
+
+        return;
+    }
+
+    if (selectedPlateResult === "삼진") {
+        alert(
+            "이미 삼진이 기록됐어요. 타석을 저장하거나 초기화해주세요."
+        );
+
+        return;
+    }
+
     currentPitchSequence.push(type);
 
     switch (type) {
@@ -237,9 +297,15 @@ function addPitch(type) {
             ballCount += 1;
 
             if (ballCount >= 4) {
-                selectedPlateResult = "볼넷";
                 ballCount = 4;
+                isTeeMode = true;
+                selectedPlateResult = "";
+
+                alert(
+                    "볼 4개입니다. 티바 타격 결과를 선택해주세요."
+                );
             }
+
             break;
 
         case "S":
@@ -247,28 +313,31 @@ function addPitch(type) {
             strikeCount += 1;
 
             if (strikeCount >= 3) {
-                selectedPlateResult = "삼진";
                 strikeCount = 3;
+                selectedPlateResult = "삼진";
             }
+
             break;
 
         case "F":
             if (strikeCount < 2) {
                 strikeCount += 1;
             }
+
             break;
     }
 
     updatePitchSequence();
     updateCountDisplay();
     updateSelectedResult();
+    updateTeeModeButtons();
 }
 
 window.addPitch = addPitch;
 
 
 /* =========================================================
-   투구 순서 출력
+   투구 순서 표시
 ========================================================= */
 
 function updatePitchSequence() {
@@ -320,18 +389,120 @@ function updatePitchSequence() {
 ========================================================= */
 
 function setPlateResult(result) {
-    selectedPlateResult = result;
+    if (isTeeMode) {
+        const teeAllowedResults = [
+            "안타",
+            "2루타",
+            "3루타",
+            "땅볼",
+            "뜬공",
+            "라인드라이브",
+            "실책",
+            "야수선택",
+            "번트"
+        ];
+
+        if (result === "홈런") {
+            alert(
+                "티바 타격에서는 홈런이 없습니다."
+            );
+
+            return;
+        }
+
+        if (!teeAllowedResults.includes(result)) {
+            alert(
+                "티바 타격 결과를 선택해주세요."
+            );
+
+            return;
+        }
+
+        selectedPlateResult =
+            `티바 ${result}`;
+    } else {
+        selectedPlateResult =
+            result;
+    }
+
     updateSelectedResult();
 }
 
 window.setPlateResult = setPlateResult;
 
 
+/* =========================================================
+   선택 결과 표시
+========================================================= */
+
 function updateSelectedResult() {
     if (!selectedResultElement) return;
 
+    if (
+        isTeeMode &&
+        !selectedPlateResult
+    ) {
+        selectedResultElement.textContent =
+            "볼 4개 · 티바 타격 대기";
+
+        selectedResultElement.classList.add(
+            "tee-mode"
+        );
+
+        return;
+    }
+
+    selectedResultElement.classList.remove(
+        "tee-mode"
+    );
+
     selectedResultElement.textContent =
         selectedPlateResult || "없음";
+}
+
+
+/* =========================================================
+   티바 결과 버튼 제어
+========================================================= */
+
+function updateTeeModeButtons() {
+    const resultButtons =
+        document.querySelectorAll(
+            ".result-buttons button"
+        );
+
+    resultButtons.forEach(function (button) {
+        const buttonText =
+            button.textContent.trim();
+
+        if (
+            isTeeMode &&
+            buttonText.includes("홈런")
+        ) {
+            button.disabled = true;
+
+            button.classList.add(
+                "disabled-result"
+            );
+        } else {
+            button.disabled = false;
+
+            button.classList.remove(
+                "disabled-result"
+            );
+        }
+    });
+}
+
+
+/* =========================================================
+   결과 이름 정리
+========================================================= */
+
+function normalizeResult(result) {
+    return String(result || "")
+        .replace("티바 ", "")
+        .trim();
 }
 
 
@@ -340,62 +511,129 @@ function updateSelectedResult() {
 ========================================================= */
 
 function savePlateAppearance() {
+    const pitcherInput =
+        document.getElementById(
+            "pitcherName"
+        );
+
+    const batterInput =
+        document.getElementById(
+            "batterName"
+        );
+
+    const batterSideInput =
+        document.getElementById(
+            "batterSide"
+        );
+
+    const runInput =
+        document.getElementById(
+            "runScored"
+        );
+
+    const rbiInput =
+        document.getElementById(
+            "rbi"
+        );
+
+    const noteInput =
+        document.getElementById(
+            "playNote"
+        );
+
     const pitcherName =
-        document
-            .getElementById("pitcherName")
-            .value
-            .trim();
+        pitcherInput
+            ? pitcherInput.value.trim()
+            : "";
 
     const batterName =
-        document
-            .getElementById("batterName")
-            .value
-            .trim();
+        batterInput
+            ? batterInput.value.trim()
+            : "";
 
     const batterSide =
-        document.getElementById("batterSide").value;
+        batterSideInput
+            ? batterSideInput.value
+            : "";
 
     const runScored =
-        Number(
-            document.getElementById("runScored").value
-        ) || 0;
+        runInput
+            ? Number(runInput.value) || 0
+            : 0;
 
     const rbi =
-        Number(
-            document.getElementById("rbi").value
-        ) || 0;
+        rbiInput
+            ? Number(rbiInput.value) || 0
+            : 0;
 
     const playNote =
-        document
-            .getElementById("playNote")
-            .value
-            .trim();
+        noteInput
+            ? noteInput.value.trim()
+            : "";
 
     if (!pitcherName) {
-        alert("투수 이름을 입력해주세요.");
+        alert(
+            "투수 이름을 입력해주세요."
+        );
+
         return;
     }
 
     if (!batterName) {
-        alert("타자 이름을 입력해주세요.");
+        alert(
+            "타자 이름을 입력해주세요."
+        );
+
+        return;
+    }
+
+    if (
+        isTeeMode &&
+        !selectedPlateResult
+    ) {
+        alert(
+            "볼 4개 이후 티바 타격 결과를 선택해주세요."
+        );
+
         return;
     }
 
     if (!selectedPlateResult) {
-        alert("타석 결과를 선택해주세요.");
+        alert(
+            "타석 결과를 선택해주세요."
+        );
+
         return;
     }
 
+    if (
+        isTeeMode &&
+        normalizeResult(selectedPlateResult) ===
+            "홈런"
+    ) {
+        alert(
+            "티바 타격에서는 홈런을 기록할 수 없습니다."
+        );
+
+        return;
+    }
+
+    const baseBefore =
+        getBaseText();
+
+    const outsBefore =
+        outCount;
+
     const scoreBefore =
-        `${homeScore} : ${awayScore}`;
+        `${awayScore} : ${homeScore}`;
 
-    const baseBefore = getBaseText();
-
-    const outsBefore = outCount;
+    const recordTeeMode =
+        isTeeMode;
 
     applyPlateResult(
         selectedPlateResult,
-        runScored
+        runScored,
+        recordTeeMode
     );
 
     const record = {
@@ -406,7 +644,9 @@ function savePlateAppearance() {
             currentInning,
 
         half:
-            isTopInning ? "top" : "bottom",
+            isTopInning
+                ? "top"
+                : "bottom",
 
         pitcher:
             pitcherName,
@@ -420,14 +660,31 @@ function savePlateAppearance() {
         pitches:
             [...currentPitchSequence],
 
+        pitchCount:
+            currentPitchSequence.length,
+
+        teeMode:
+            recordTeeMode,
+
+        originalPitchResult:
+            recordTeeMode
+                ? "볼 4개"
+                : "",
+
         result:
             selectedPlateResult,
 
         baseBefore:
             baseBefore,
 
+        baseAfter:
+            getBaseText(),
+
         outsBefore:
             outsBefore,
+
+        outsAfter:
+            outCount,
 
         runs:
             runScored,
@@ -439,7 +696,7 @@ function savePlateAppearance() {
             scoreBefore,
 
         scoreAfter:
-            `${homeScore} : ${awayScore}`,
+            `${awayScore} : ${homeScore}`,
 
         note:
             playNote,
@@ -450,8 +707,7 @@ function savePlateAppearance() {
 
     plateAppearances.push(record);
 
-    updateBatterStats(record);
-    updatePitcherStats(record);
+    rebuildStatistics();
 
     drawRecordTable();
     drawBatterStats();
@@ -459,9 +715,12 @@ function savePlateAppearance() {
     drawCharts();
     drawMVP();
 
+    const shouldFinishHalfInning =
+        outCount >= 3;
+
     resetCurrentPlateAppearance();
 
-    if (outCount >= 3) {
+    if (shouldFinishHalfInning) {
         finishHalfInning();
     }
 }
@@ -471,13 +730,20 @@ window.savePlateAppearance =
 
 
 /* =========================================================
-   결과에 따른 경기 상황 반영
+   타석 결과 적용
 ========================================================= */
 
-function applyPlateResult(result, runs) {
+function applyPlateResult(
+    result,
+    runs,
+    recordTeeMode
+) {
+    const normalizedResult =
+        normalizeResult(result);
+
     let outAdded = 0;
 
-    switch (result) {
+    switch (normalizedResult) {
         case "안타":
             advanceRunners(1);
             baseState.first = true;
@@ -494,14 +760,30 @@ function applyPlateResult(result, runs) {
             break;
 
         case "홈런":
+            if (recordTeeMode) {
+                alert(
+                    "티바 타격에서는 홈런을 기록할 수 없습니다."
+                );
+
+                return;
+            }
+
             baseState = {
                 first: false,
                 second: false,
                 third: false
             };
+
             break;
 
         case "볼넷":
+            if (recordTeeMode) {
+                return;
+            }
+
+            forceWalkAdvance();
+            break;
+
         case "몸에 맞는 공":
             forceWalkAdvance();
             break;
@@ -510,9 +792,14 @@ function applyPlateResult(result, runs) {
         case "땅볼":
         case "뜬공":
         case "라인드라이브":
-        case "번트":
         case "희생플라이":
+        case "번트":
             outAdded = 1;
+            break;
+
+        case "실책":
+        case "야수선택":
+            baseState.first = true;
             break;
     }
 
@@ -530,30 +817,36 @@ function applyPlateResult(result, runs) {
    주자 진루
 ========================================================= */
 
-function advanceRunners(bases) {
-    const nextState = {
+function advanceRunners(baseAmount) {
+    const oldBases = {
+        first: baseState.first,
+        second: baseState.second,
+        third: baseState.third
+    };
+
+    const nextBases = {
         first: false,
         second: false,
         third: false
     };
 
-    if (bases === 1) {
-        if (baseState.second) {
-            nextState.third = true;
+    if (baseAmount === 1) {
+        if (oldBases.first) {
+            nextBases.second = true;
         }
 
-        if (baseState.first) {
-            nextState.second = true;
-        }
-    }
-
-    if (bases === 2) {
-        if (baseState.first) {
-            nextState.third = true;
+        if (oldBases.second) {
+            nextBases.third = true;
         }
     }
 
-    baseState = nextState;
+    if (baseAmount === 2) {
+        if (oldBases.first) {
+            nextBases.third = true;
+        }
+    }
+
+    baseState = nextBases;
 }
 
 
@@ -574,7 +867,7 @@ function forceWalkAdvance() {
 
 
 /* =========================================================
-   득점 반영
+   득점 처리
 ========================================================= */
 
 function addRuns(runs) {
@@ -585,31 +878,22 @@ function addRuns(runs) {
 
         inningScores.away[currentInning] =
             (
-                inningScores.away[currentInning] ||
-                0
+                inningScores.away[
+                    currentInning
+                ] || 0
             ) + runs;
     } else {
         homeScore += runs;
 
         inningScores.home[currentInning] =
             (
-                inningScores.home[currentInning] ||
-                0
+                inningScores.home[
+                    currentInning
+                ] || 0
             ) + runs;
     }
-}
 
-
-function updateScoreDisplay() {
-    if (homeScoreElement) {
-        homeScoreElement.textContent =
-            homeScore;
-    }
-
-    if (awayScoreElement) {
-        awayScoreElement.textContent =
-            awayScore;
-    }
+    updateScoreDisplay();
 }
 
 
@@ -619,7 +903,6 @@ function updateScoreDisplay() {
 
 function finishHalfInning() {
     outCount = 0;
-
     ballCount = 0;
     strikeCount = 0;
 
@@ -629,10 +912,17 @@ function finishHalfInning() {
         third: false
     };
 
+    isTeeMode = false;
+    selectedPlateResult = "";
+    currentPitchSequence = [];
+
     nextInning();
 
     updateCountDisplay();
     updateBaseDisplay();
+    updatePitchSequence();
+    updateSelectedResult();
+    updateTeeModeButtons();
 }
 
 
@@ -646,15 +936,22 @@ function resetCurrentPlateAppearance() {
 
     currentPitchSequence = [];
     selectedPlateResult = "";
+    isTeeMode = false;
 
     const runInput =
-        document.getElementById("runScored");
+        document.getElementById(
+            "runScored"
+        );
 
     const rbiInput =
-        document.getElementById("rbi");
+        document.getElementById(
+            "rbi"
+        );
 
     const noteInput =
-        document.getElementById("playNote");
+        document.getElementById(
+            "playNote"
+        );
 
     if (runInput) {
         runInput.value = 0;
@@ -671,6 +968,7 @@ function resetCurrentPlateAppearance() {
     updateCountDisplay();
     updatePitchSequence();
     updateSelectedResult();
+    updateTeeModeButtons();
 }
 
 window.resetCurrentPlateAppearance =
@@ -683,13 +981,20 @@ window.resetCurrentPlateAppearance =
 
 function undoLastPlateAppearance() {
     if (plateAppearances.length === 0) {
-        alert("취소할 기록이 없습니다.");
+        alert(
+            "취소할 기록이 없습니다."
+        );
+
         return;
     }
 
     plateAppearances.pop();
 
-    rebuildEverything();
+    rebuildGameFromRecords();
+
+    alert(
+        "최근 타석 기록을 취소했습니다."
+    );
 }
 
 window.undoLastPlateAppearance =
@@ -697,10 +1002,10 @@ window.undoLastPlateAppearance =
 
 
 /* =========================================================
-   전체 기록 재계산
+   기록 전체 재계산
 ========================================================= */
 
-function rebuildEverything() {
+function rebuildGameFromRecords() {
     homeScore = 0;
     awayScore = 0;
 
@@ -708,9 +1013,6 @@ function rebuildEverything() {
         home: {},
         away: {}
     };
-
-    batterStats = {};
-    pitcherStats = {};
 
     plateAppearances.forEach(function (record) {
         if (record.half === "top") {
@@ -736,10 +1038,9 @@ function rebuildEverything() {
                     ] || 0
                 ) + record.runs;
         }
-
-        updateBatterStats(record);
-        updatePitcherStats(record);
     });
+
+    rebuildStatistics();
 
     updateScoreDisplay();
     drawRecordTable();
@@ -751,7 +1052,22 @@ function rebuildEverything() {
 
 
 /* =========================================================
-   기록표
+   통계 전체 재계산
+========================================================= */
+
+function rebuildStatistics() {
+    batterStats = {};
+    pitcherStats = {};
+
+    plateAppearances.forEach(function (record) {
+        updateBatterStats(record);
+        updatePitcherStats(record);
+    });
+}
+
+
+/* =========================================================
+   기록표 출력
 ========================================================= */
 
 function drawRecordTable() {
@@ -778,16 +1094,51 @@ function drawRecordTable() {
         const row =
             document.createElement("tr");
 
+        const pitchText =
+            record.pitches.length > 0
+                ? record.pitches.join(" ")
+                : "-";
+
+        const teeText =
+            record.teeMode
+                ? " · 티바"
+                : "";
+
         row.innerHTML = `
-            <td>${record.inning}</td>
-            <td>${record.pitcher}</td>
-            <td>${record.batter}</td>
-            <td>${record.pitches.join(" ") || "-"}</td>
-            <td>${record.result}</td>
-            <td>${record.baseBefore}</td>
-            <td>${record.outsBefore}</td>
-            <td>${record.scoreAfter}</td>
-            <td>${record.note || "-"}</td>
+            <td>${escapeHtml(record.inning)}</td>
+
+            <td>
+                ${escapeHtml(record.pitcher)}
+            </td>
+
+            <td>
+                ${escapeHtml(record.batter)}
+            </td>
+
+            <td>
+                ${escapeHtml(pitchText)}
+                ${teeText}
+            </td>
+
+            <td>
+                ${escapeHtml(record.result)}
+            </td>
+
+            <td>
+                ${escapeHtml(record.baseBefore)}
+            </td>
+
+            <td>
+                ${record.outsAfter}
+            </td>
+
+            <td>
+                ${escapeHtml(record.scoreAfter)}
+            </td>
+
+            <td>
+                ${escapeHtml(record.note || "-")}
+            </td>
         `;
 
         row.addEventListener(
@@ -803,7 +1154,7 @@ function drawRecordTable() {
 
 
 /* =========================================================
-   타자 통계 업데이트
+   타자 통계
 ========================================================= */
 
 function updateBatterStats(record) {
@@ -819,16 +1170,24 @@ function updateBatterStats(record) {
             hbp: 0,
             strikeouts: 0,
             rbi: 0,
-            runs: 0
+            runs: 0,
+            teeAppearances: 0
         };
     }
 
     const stats =
         batterStats[record.batter];
 
+    const result =
+        normalizeResult(record.result);
+
     stats.pa += 1;
     stats.rbi += record.rbi;
     stats.runs += record.runs;
+
+    if (record.teeMode) {
+        stats.teeAppearances += 1;
+    }
 
     const nonAtBatResults = [
         "볼넷",
@@ -837,14 +1196,12 @@ function updateBatterStats(record) {
     ];
 
     if (
-        !nonAtBatResults.includes(
-            record.result
-        )
+        !nonAtBatResults.includes(result)
     ) {
         stats.ab += 1;
     }
 
-    switch (record.result) {
+    switch (result) {
         case "안타":
             stats.hits += 1;
             break;
@@ -880,7 +1237,7 @@ function updateBatterStats(record) {
 
 
 /* =========================================================
-   타자 통계 계산
+   타자 계산 지표
 ========================================================= */
 
 function getBatterCalculatedStats(stats) {
@@ -889,13 +1246,14 @@ function getBatterCalculatedStats(stats) {
             ? stats.hits / stats.ab
             : 0;
 
+    const singles =
+        stats.hits -
+        stats.doubles -
+        stats.triples -
+        stats.homeRuns;
+
     const totalBases =
-        (
-            stats.hits -
-            stats.doubles -
-            stats.triples -
-            stats.homeRuns
-        ) +
+        singles +
         stats.doubles * 2 +
         stats.triples * 3 +
         stats.homeRuns * 4;
@@ -954,11 +1312,15 @@ function drawBatterStats() {
         entries
             .map(function ([name, stats]) {
                 const calculated =
-                    getBatterCalculatedStats(stats);
+                    getBatterCalculatedStats(
+                        stats
+                    );
 
                 return `
                     <div class="stat-player-card">
-                        <h3>${name}</h3>
+                        <h3>
+                            ${escapeHtml(name)}
+                        </h3>
 
                         <div class="stat-row">
                             <span>타석</span>
@@ -976,23 +1338,36 @@ function drawBatterStats() {
                         </div>
 
                         <div class="stat-row">
+                            <span>티바 타석</span>
+                            <strong>${stats.teeAppearances}</strong>
+                        </div>
+
+                        <div class="stat-row">
                             <span>타율</span>
-                            <strong>${formatAverage(calculated.avg)}</strong>
+                            <strong>
+                                ${formatAverage(calculated.avg)}
+                            </strong>
                         </div>
 
                         <div class="stat-row">
                             <span>출루율</span>
-                            <strong>${formatAverage(calculated.obp)}</strong>
+                            <strong>
+                                ${formatAverage(calculated.obp)}
+                            </strong>
                         </div>
 
                         <div class="stat-row">
                             <span>장타율</span>
-                            <strong>${formatAverage(calculated.slg)}</strong>
+                            <strong>
+                                ${formatAverage(calculated.slg)}
+                            </strong>
                         </div>
 
                         <div class="stat-row">
                             <span>OPS</span>
-                            <strong>${calculated.ops.toFixed(3)}</strong>
+                            <strong>
+                                ${calculated.ops.toFixed(3)}
+                            </strong>
                         </div>
 
                         <div class="stat-row">
@@ -1007,7 +1382,7 @@ function drawBatterStats() {
 
 
 /* =========================================================
-   투수 통계 업데이트
+   투수 통계
 ========================================================= */
 
 function updatePitcherStats(record) {
@@ -1018,16 +1393,21 @@ function updatePitcherStats(record) {
             strikes: 0,
             balls: 0,
             hitsAllowed: 0,
-            walks: 0,
             strikeouts: 0,
-            runsAllowed: 0
+            runsAllowed: 0,
+            teeBatters: 0,
+            fourBallCounts: 0
         };
     }
 
     const stats =
         pitcherStats[record.pitcher];
 
+    const result =
+        normalizeResult(record.result);
+
     stats.battersFaced += 1;
+
     stats.pitches +=
         record.pitches.length;
 
@@ -1045,22 +1425,23 @@ function updatePitcherStats(record) {
         }
     });
 
+    if (record.teeMode) {
+        stats.teeBatters += 1;
+        stats.fourBallCounts += 1;
+    }
+
     if (
         [
             "안타",
             "2루타",
             "3루타",
             "홈런"
-        ].includes(record.result)
+        ].includes(result)
     ) {
         stats.hitsAllowed += 1;
     }
 
-    if (record.result === "볼넷") {
-        stats.walks += 1;
-    }
-
-    if (record.result === "삼진") {
+    if (result === "삼진") {
         stats.strikeouts += 1;
     }
 
@@ -1102,46 +1483,71 @@ function drawPitcherStats() {
 
                 return `
                     <div class="stat-player-card">
-                        <h3>${name}</h3>
+                        <h3>
+                            ${escapeHtml(name)}
+                        </h3>
 
                         <div class="stat-row">
                             <span>상대한 타자</span>
-                            <strong>${stats.battersFaced}</strong>
+                            <strong>
+                                ${stats.battersFaced}
+                            </strong>
                         </div>
 
                         <div class="stat-row">
                             <span>총 투구 수</span>
-                            <strong>${stats.pitches}</strong>
+                            <strong>
+                                ${stats.pitches}
+                            </strong>
                         </div>
 
                         <div class="stat-row">
                             <span>스트라이크</span>
-                            <strong>${stats.strikes}</strong>
+                            <strong>
+                                ${stats.strikes}
+                            </strong>
                         </div>
 
                         <div class="stat-row">
                             <span>볼</span>
-                            <strong>${stats.balls}</strong>
+                            <strong>
+                                ${stats.balls}
+                            </strong>
                         </div>
 
                         <div class="stat-row">
                             <span>스트라이크 비율</span>
-                            <strong>${strikeRate.toFixed(1)}%</strong>
+                            <strong>
+                                ${strikeRate.toFixed(1)}%
+                            </strong>
                         </div>
 
                         <div class="stat-row">
                             <span>삼진</span>
-                            <strong>${stats.strikeouts}</strong>
+                            <strong>
+                                ${stats.strikeouts}
+                            </strong>
                         </div>
 
                         <div class="stat-row">
-                            <span>볼넷</span>
-                            <strong>${stats.walks}</strong>
+                            <span>볼 4개</span>
+                            <strong>
+                                ${stats.fourBallCounts}
+                            </strong>
+                        </div>
+
+                        <div class="stat-row">
+                            <span>티바 전환</span>
+                            <strong>
+                                ${stats.teeBatters}
+                            </strong>
                         </div>
 
                         <div class="stat-row">
                             <span>피안타</span>
-                            <strong>${stats.hitsAllowed}</strong>
+                            <strong>
+                                ${stats.hitsAllowed}
+                            </strong>
                         </div>
                     </div>
                 `;
@@ -1182,11 +1588,13 @@ function drawMVP() {
     }
 
     let bestPlayer = null;
-    let bestScore = -1;
+    let bestScore = -Infinity;
 
     entries.forEach(function ([name, stats]) {
         const calculated =
-            getBatterCalculatedStats(stats);
+            getBatterCalculatedStats(
+                stats
+            );
 
         const score =
             stats.hits * 3 +
@@ -1214,7 +1622,9 @@ function drawMVP() {
                 PLAYER OF THE GAME
             </span>
 
-            <h3>${bestPlayer.name}</h3>
+            <h3>
+                ${escapeHtml(bestPlayer.name)}
+            </h3>
 
             <p>
                 경기 기여도가 가장 높은 타자
@@ -1223,6 +1633,7 @@ function drawMVP() {
             <div class="mvp-numbers">
                 <div>
                     <span>타율</span>
+
                     <strong>
                         ${formatAverage(bestPlayer.calculated.avg)}
                     </strong>
@@ -1230,6 +1641,7 @@ function drawMVP() {
 
                 <div>
                     <span>안타</span>
+
                     <strong>
                         ${bestPlayer.stats.hits}
                     </strong>
@@ -1237,6 +1649,7 @@ function drawMVP() {
 
                 <div>
                     <span>타점</span>
+
                     <strong>
                         ${bestPlayer.stats.rbi}
                     </strong>
@@ -1270,15 +1683,19 @@ function drawInningScoreChart() {
         return;
     }
 
+    const homeInnings =
+        Object.keys(inningScores.home)
+            .map(Number);
+
+    const awayInnings =
+        Object.keys(inningScores.away)
+            .map(Number);
+
     const maxInning =
         Math.max(
             currentInning,
-            ...Object.keys(
-                inningScores.home
-            ).map(Number),
-            ...Object.keys(
-                inningScores.away
-            ).map(Number),
+            ...homeInnings,
+            ...awayInnings,
             1
         );
 
@@ -1317,78 +1734,73 @@ function drawInningScoreChart() {
     }
 
     inningScoreChart =
-        new Chart(
-            canvas,
-            {
-                type: "line",
+        new Chart(canvas, {
+            type: "line",
 
-                data: {
-                    labels: labels,
+            data: {
+                labels: labels,
 
-                    datasets: [
-                        {
-                            label: "HOME",
-                            data: homeData,
-                            borderColor:
-                                "#ef3340",
-                            backgroundColor:
-                                "rgba(239,51,64,0.15)",
-                            tension: 0.3
-                        },
+                datasets: [
+                    {
+                        label: "HOME",
+                        data: homeData,
+                        borderColor: "#ef3340",
+                        backgroundColor:
+                            "rgba(239,51,64,0.15)",
+                        tension: 0.3
+                    },
 
-                        {
-                            label: "AWAY",
-                            data: awayData,
-                            borderColor:
-                                "#2563eb",
-                            backgroundColor:
-                                "rgba(37,99,235,0.15)",
-                            tension: 0.3
+                    {
+                        label: "AWAY",
+                        data: awayData,
+                        borderColor: "#2563eb",
+                        backgroundColor:
+                            "rgba(37,99,235,0.15)",
+                        tension: 0.3
+                    }
+                ]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: "#cbd5e1"
                         }
-                    ]
+                    }
                 },
 
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        ticks: {
+                            color: "#94a3b8"
+                        },
 
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: "#cbd5e1"
-                            }
+                        grid: {
+                            color:
+                                "rgba(148,163,184,0.08)"
                         }
                     },
 
-                    scales: {
-                        x: {
-                            ticks: {
-                                color: "#94a3b8"
-                            },
+                    y: {
+                        beginAtZero: true,
 
-                            grid: {
-                                color:
-                                    "rgba(148,163,184,0.08)"
-                            }
+                        ticks: {
+                            color: "#94a3b8",
+                            precision: 0
                         },
 
-                        y: {
-                            beginAtZero: true,
-
-                            ticks: {
-                                color: "#94a3b8",
-                                precision: 0
-                            },
-
-                            grid: {
-                                color:
-                                    "rgba(148,163,184,0.08)"
-                            }
+                        grid: {
+                            color:
+                                "rgba(148,163,184,0.08)"
                         }
                     }
                 }
             }
-        );
+        });
 }
 
 
@@ -1408,10 +1820,12 @@ function drawResultChart() {
     const resultCount = {};
 
     plateAppearances.forEach(function (record) {
-        resultCount[record.result] =
+        const result =
+            record.result;
+
+        resultCount[result] =
             (
-                resultCount[record.result] ||
-                0
+                resultCount[result] || 0
             ) + 1;
     });
 
@@ -1426,61 +1840,58 @@ function drawResultChart() {
     }
 
     resultChart =
-        new Chart(
-            canvas,
-            {
-                type: "doughnut",
+        new Chart(canvas, {
+            type: "doughnut",
 
-                data: {
-                    labels:
-                        labels.length > 0
-                            ? labels
-                            : ["기록 없음"],
+            data: {
+                labels:
+                    labels.length > 0
+                        ? labels
+                        : ["기록 없음"],
 
-                    datasets: [
-                        {
-                            data:
-                                data.length > 0
-                                    ? data
-                                    : [1],
+                datasets: [
+                    {
+                        data:
+                            data.length > 0
+                                ? data
+                                : [1],
 
-                            backgroundColor: [
-                                "#ef3340",
-                                "#2563eb",
-                                "#22c55e",
-                                "#facc15",
-                                "#f97316",
-                                "#a855f7",
-                                "#14b8a6",
-                                "#64748b"
-                            ],
+                        backgroundColor: [
+                            "#ef3340",
+                            "#2563eb",
+                            "#22c55e",
+                            "#facc15",
+                            "#f97316",
+                            "#a855f7",
+                            "#14b8a6",
+                            "#64748b"
+                        ],
 
-                            borderWidth: 0
-                        }
-                    ]
-                },
+                        borderWidth: 0
+                    }
+                ]
+            },
 
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
 
-                    plugins: {
-                        legend: {
-                            position: "bottom",
+                plugins: {
+                    legend: {
+                        position: "bottom",
 
-                            labels: {
-                                color: "#cbd5e1"
-                            }
+                        labels: {
+                            color: "#cbd5e1"
                         }
                     }
                 }
             }
-        );
+        });
 }
 
 
 /* =========================================================
-   로컬 영상
+   로컬 영상 불러오기
 ========================================================= */
 
 function loadVideo(event) {
@@ -1523,7 +1934,38 @@ window.loadVideo = loadVideo;
    영상 제어
 ========================================================= */
 
+function isYouTubeMode() {
+    const youtubeWrap =
+        document.getElementById(
+            "youtubePlayerWrap"
+        );
+
+    return (
+        youtubeWrap &&
+        !youtubeWrap.hidden &&
+        window.youtubePlayer
+    );
+}
+
+
 function back5() {
+    if (
+        isYouTubeMode() &&
+        typeof window.youtubePlayer.seekTo ===
+            "function"
+    ) {
+        const currentTime =
+            window.youtubePlayer
+                .getCurrentTime() || 0;
+
+        window.youtubePlayer.seekTo(
+            Math.max(0, currentTime - 5),
+            true
+        );
+
+        return;
+    }
+
     if (!video) return;
 
     video.currentTime =
@@ -1535,6 +1977,23 @@ function back5() {
 
 
 function forward5() {
+    if (
+        isYouTubeMode() &&
+        typeof window.youtubePlayer.seekTo ===
+            "function"
+    ) {
+        const currentTime =
+            window.youtubePlayer
+                .getCurrentTime() || 0;
+
+        window.youtubePlayer.seekTo(
+            currentTime + 5,
+            true
+        );
+
+        return;
+    }
+
     if (!video) return;
 
     video.currentTime += 5;
@@ -1542,10 +2001,31 @@ function forward5() {
 
 
 function playPause() {
+    if (isYouTubeMode()) {
+        const playerState =
+            window.youtubePlayer
+                .getPlayerState();
+
+        if (
+            playerState ===
+            YT.PlayerState.PLAYING
+        ) {
+            window.youtubePlayer
+                .pauseVideo();
+        } else {
+            window.youtubePlayer
+                .playVideo();
+        }
+
+        return;
+    }
+
     if (!video) return;
 
     if (video.paused) {
-        video.play().catch(function () {});
+        video
+            .play()
+            .catch(function () {});
     } else {
         video.pause();
     }
@@ -1553,10 +2033,27 @@ function playPause() {
 
 
 function setVideoSpeed(speed) {
+    const playbackSpeed =
+        Number(speed) || 1;
+
+    if (
+        isYouTubeMode() &&
+        typeof window.youtubePlayer
+            .setPlaybackRate ===
+            "function"
+    ) {
+        window.youtubePlayer
+            .setPlaybackRate(
+                playbackSpeed
+            );
+
+        return;
+    }
+
     if (!video) return;
 
     video.playbackRate =
-        Number(speed) || 1;
+        playbackSpeed;
 }
 
 window.back5 = back5;
@@ -1566,20 +2063,15 @@ window.setVideoSpeed = setVideoSpeed;
 
 
 /* =========================================================
-   영상 시간
+   영상 시간 저장 및 이동
 ========================================================= */
 
 function getCurrentVideoTime() {
     if (
-        window.youtubePlayer &&
+        isYouTubeMode() &&
         typeof window.youtubePlayer
             .getCurrentTime ===
-            "function" &&
-        !document
-            .getElementById(
-                "youtubePlayerWrap"
-            )
-            .hidden
+            "function"
     ) {
         return (
             window.youtubePlayer
@@ -1596,42 +2088,39 @@ function getCurrentVideoTime() {
 
 
 function seekVideoTime(time) {
-    const target =
+    const targetTime =
         Number(time) || 0;
 
-    const youtubeWrap =
-        document.getElementById(
-            "youtubePlayerWrap"
-        );
-
     if (
-        youtubeWrap &&
-        !youtubeWrap.hidden &&
-        window.youtubePlayer &&
+        isYouTubeMode() &&
         typeof window.youtubePlayer.seekTo ===
             "function"
     ) {
         window.youtubePlayer.seekTo(
-            target,
+            targetTime,
             true
         );
+
+        window.youtubePlayer
+            .playVideo();
 
         return;
     }
 
     if (video) {
-        video.currentTime = target;
-        video.play().catch(function () {});
+        video.currentTime =
+            targetTime;
+
+        video
+            .play()
+            .catch(function () {});
     }
 }
 
 
 /* =========================================================
-   YouTube 영상
+   유튜브 영상
 ========================================================= */
-
-let pendingYouTubeId = "";
-
 
 function extractYouTubeId(url) {
     const text =
@@ -1659,13 +2148,15 @@ function extractYouTubeId(url) {
 
 
 function loadYouTubeVideo() {
+    const urlInput =
+        document.getElementById(
+            "youtubeUrl"
+        );
+
     const url =
-        document
-            .getElementById(
-                "youtubeUrl"
-            )
-            .value
-            .trim();
+        urlInput
+            ? urlInput.value.trim()
+            : "";
 
     const videoId =
         extractYouTubeId(url);
@@ -1674,6 +2165,7 @@ function loadYouTubeVideo() {
         alert(
             "올바른 유튜브 주소를 입력해주세요."
         );
+
         return;
     }
 
@@ -1741,13 +2233,27 @@ window.onYouTubeIframeAPIReady =
                         onError:
                             function () {
                                 alert(
-                                    "이 영상은 외부 재생이 제한되었거나 재생할 수 없습니다."
+                                    "이 유튜브 영상은 외부 재생이 제한됐거나 재생할 수 없습니다."
                                 );
                             }
                     }
                 }
             );
     };
+
+
+/* =========================================================
+   HTML 문자 안전 처리
+========================================================= */
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
 
 
 /* =========================================================
@@ -1761,15 +2267,43 @@ window.addEventListener(
 
         updateInningDisplay();
         updateCountDisplay();
+        updateScoreDisplay();
         updateBaseDisplay();
         updatePitchSequence();
         updateSelectedResult();
-        updateScoreDisplay();
+        updateTeeModeButtons();
 
         drawRecordTable();
         drawBatterStats();
         drawPitcherStats();
         drawCharts();
         drawMVP();
+
+        if (base1Element) {
+            base1Element.addEventListener(
+                "click",
+                function () {
+                    toggleBase("first");
+                }
+            );
+        }
+
+        if (base2Element) {
+            base2Element.addEventListener(
+                "click",
+                function () {
+                    toggleBase("second");
+                }
+            );
+        }
+
+        if (base3Element) {
+            base3Element.addEventListener(
+                "click",
+                function () {
+                    toggleBase("third");
+                }
+            );
+        }
     }
 );
