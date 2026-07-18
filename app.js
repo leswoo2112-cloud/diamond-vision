@@ -1,12 +1,12 @@
 /* =========================================================
    DiamondVision 1.0
-   app.js 전체 코드 1/2
+   app.js 전체 코드 1/3
 
    포함 기능
    - HOME / AWAY 라인업
    - 자동 타순 진행
    - 3아웃 자동 공수교대
-   - 득점 정상 반영
+   - 홈런 자동 득점
    - 볼 4개 → 티바 타격
    - 티바 홈런 금지
 ========================================================= */
@@ -190,7 +190,9 @@ function setTodayDate() {
 
 function getHomeTeamName() {
     const input =
-        document.getElementById("homeTeamName");
+        document.getElementById(
+            "homeTeamName"
+        );
 
     const value =
         input
@@ -203,7 +205,9 @@ function getHomeTeamName() {
 
 function getAwayTeamName() {
     const input =
-        document.getElementById("awayTeamName");
+        document.getElementById(
+            "awayTeamName"
+        );
 
     const value =
         input
@@ -223,10 +227,14 @@ function getTeamName(teamKey) {
 
 function updateTeamTitles() {
     const homeTitle =
-        document.getElementById("homeLineupTitle");
+        document.getElementById(
+            "homeLineupTitle"
+        );
 
     const awayTitle =
-        document.getElementById("awayLineupTitle");
+        document.getElementById(
+            "awayLineupTitle"
+        );
 
     if (homeTitle) {
         homeTitle.textContent =
@@ -415,6 +423,15 @@ function getBaseText() {
 }
 
 
+function countBaseRunners() {
+    return (
+        Number(baseState.first) +
+        Number(baseState.second) +
+        Number(baseState.third)
+    );
+}
+
+
 /* =========================================================
    라인업 패널
 ========================================================= */
@@ -422,7 +439,9 @@ function getBaseText() {
 function toggleLineupPanel() {
     if (!lineupPanel) return;
 
-    lineupPanel.classList.toggle("hidden");
+    lineupPanel.classList.toggle(
+        "hidden"
+    );
 }
 
 window.toggleLineupPanel =
@@ -518,7 +537,9 @@ function saveLineups() {
 
     saveGameState();
 
-    alert("라인업을 저장했습니다.");
+    alert(
+        "라인업을 저장했습니다."
+    );
 }
 
 window.saveLineups = saveLineups;
@@ -944,8 +965,6 @@ function updatePitchSequence() {
             `총 ${currentPitchSequence.length}구`;
     }
 }
-
-
 /* =========================================================
    타석 결과 선택
 ========================================================= */
@@ -1166,12 +1185,7 @@ function savePlateAppearance() {
             ? batterSideInput.value
             : "우타";
 
-    /*
-        점수 오류 수정 핵심 부분입니다.
-        득점 입력값을 정수로 변환합니다.
-    */
-
-    const runScored =
+    const enteredRuns =
         runInput
             ? Math.max(
                 0,
@@ -1249,6 +1263,26 @@ function savePlateAppearance() {
         return;
     }
 
+    /*
+        홈런 자동 득점
+
+        주자 없음 = 1점
+        주자 1명 = 2점
+        주자 2명 = 3점
+        만루 = 4점
+    */
+
+    let actualRuns =
+        enteredRuns;
+
+    if (
+        normalizedResult === "홈런" &&
+        !isTeeMode
+    ) {
+        actualRuns =
+            countBaseRunners() + 1;
+    }
+
     const offenseKey =
         getCurrentOffenseKey();
 
@@ -1272,7 +1306,7 @@ function savePlateAppearance() {
 
     applyPlateResult(
         selectedPlateResult,
-        runScored,
+        actualRuns,
         teeModeAtSave
     );
 
@@ -1342,7 +1376,7 @@ function savePlateAppearance() {
             outCount,
 
         runs:
-            runScored,
+            actualRuns,
 
         rbi:
             rbi,
@@ -1360,14 +1394,17 @@ function savePlateAppearance() {
             getCurrentVideoTime()
     };
 
-    plateAppearances.push(record);
+    plateAppearances.push(
+        record
+    );
 
     /*
-        타석이 종료되면 결과와 관계없이
-        다음 타자로 이동합니다.
+        타석 종료 후 다음 타자
     */
 
-    advanceBattingOrder(offenseKey);
+    advanceBattingOrder(
+        offenseKey
+    );
 
     const reachedThreeOuts =
         outCount >= 3;
@@ -1454,13 +1491,16 @@ function applyPlateResult(
             break;
     }
 
-    outCount += addedOuts;
+    outCount +=
+        addedOuts;
 
     if (outCount > 3) {
         outCount = 3;
     }
 
-    addRuns(runs);
+    addRuns(
+        runs
+    );
 
     updateCountDisplay();
     updateBaseDisplay();
@@ -1874,6 +1914,7 @@ function updateBatterStats(record) {
         );
 
     stats.pa += 1;
+
     stats.runs +=
         Number(record.runs) || 0;
 
@@ -3475,7 +3516,7 @@ function loadGameState() {
 
 
 /* =========================================================
-   저장된 라인업을 입력창에 반영
+   저장된 라인업 입력창 반영
 ========================================================= */
 
 function writeLineupsToInputs() {
