@@ -5,984 +5,172 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+        content="width=device-width, initial-scale=1.0"
     >
 
-    <title>DiamondVision 야구 기록</title>
+    <title>Diamond Vision</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
-        :root {
-            --bg: #07111f;
-            --panel: #101d30;
-            --panel-2: #17263b;
-            --line: #2a3b53;
-            --text: #f8fafc;
-            --muted: #94a3b8;
-            --red: #ef4444;
-            --blue: #3b82f6;
-            --green: #22c55e;
-            --yellow: #facc15;
-            --orange: #f97316;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background:
-                radial-gradient(
-                    circle at top,
-                    #15243b 0,
-                    var(--bg) 55%
-                );
-            color: var(--text);
-            font-family:
-                -apple-system,
-                BlinkMacSystemFont,
-                "Apple SD Gothic Neo",
-                "Noto Sans KR",
-                sans-serif;
-        }
-
-        button,
-        input,
-        select,
-        textarea {
-            font: inherit;
-        }
-
-        button {
-            border: 0;
-            cursor: pointer;
-            color: white;
-            touch-action: manipulation;
-        }
-
-        button:disabled {
-            opacity: 0.35;
-            cursor: not-allowed;
-        }
-
-        .app {
-            width: min(1400px, 100%);
-            margin: 0 auto;
-            padding:
-                max(18px, env(safe-area-inset-top))
-                16px
-                max(30px, env(safe-area-inset-bottom));
-        }
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            margin-bottom: 18px;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: clamp(25px, 4vw, 42px);
-        }
-
-        .header p {
-            margin: 5px 0 0;
-            color: var(--muted);
-        }
-
-        .reset-game-button {
-            padding: 12px 16px;
-            border-radius: 12px;
-            background: #334155;
-            white-space: nowrap;
-        }
-
-        .card {
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(23, 38, 59, 0.96),
-                    rgba(12, 24, 42, 0.96)
-                );
-            border: 1px solid var(--line);
-            border-radius: 18px;
-            padding: 16px;
-            box-shadow:
-                0 15px 40px rgba(0, 0, 0, 0.25);
-        }
-
-        .scoreboard {
-            display: grid;
-            grid-template-columns:
-                minmax(0, 1fr)
-                auto
-                minmax(0, 1fr);
-            align-items: stretch;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-
-        .team-box {
-            display: grid;
-            place-items: center;
-            min-height: 150px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 16px;
-            padding: 14px;
-        }
-
-        .team-box input {
-            width: 100%;
-            max-width: 240px;
-            border: 0;
-            border-bottom: 1px solid var(--line);
-            background: transparent;
-            color: white;
-            text-align: center;
-            font-size: 19px;
-            font-weight: 800;
-            padding: 8px;
-        }
-
-        .team-score {
-            font-size: clamp(55px, 11vw, 105px);
-            font-weight: 900;
-            line-height: 1;
-            margin-top: 8px;
-        }
-
-        .away-box .team-score {
-            color: #60a5fa;
-        }
-
-        .home-box .team-score {
-            color: #fb7185;
-        }
-
-        .inning-box {
-            min-width: 180px;
-            display: grid;
-            align-content: center;
-            justify-items: center;
-            gap: 10px;
-            padding: 14px;
-        }
-
-        #inningDisplay {
-            font-size: 30px;
-            font-weight: 900;
-        }
-
-        .inning-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .inning-controls button {
-            background: #334155;
-            padding: 10px 14px;
-            border-radius: 10px;
-        }
-
-        .offense-label {
-            color: var(--yellow);
-            font-size: 14px;
-            font-weight: 800;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns:
-                minmax(0, 1.05fr)
-                minmax(340px, 0.95fr);
-            gap: 14px;
-        }
-
-        .section-title {
-            margin: 0 0 14px;
-            font-size: 20px;
-        }
-
-        .count-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-
-        .count-box {
-            text-align: center;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 14px;
-            padding: 12px;
-        }
-
-        .count-box span {
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        .count-box strong {
-            display: block;
-            margin-top: 3px;
-            font-size: 34px;
-        }
-
-        .ball-count strong {
-            color: var(--green);
-        }
-
-        .strike-count strong {
-            color: var(--yellow);
-        }
-
-        .out-count strong {
-            color: var(--red);
-        }
-
-        .pitch-buttons,
-        .result-buttons,
-        .save-buttons {
-            display: grid;
-            gap: 9px;
-        }
-
-        .pitch-buttons {
-            grid-template-columns: repeat(4, 1fr);
-        }
-
-        .result-buttons {
-            grid-template-columns: repeat(3, 1fr);
-            margin-top: 12px;
-        }
-
-        .save-buttons {
-            grid-template-columns: 1fr 1fr;
-            margin-top: 12px;
-        }
-
-        .pitch-buttons button,
-        .result-buttons button,
-        .save-buttons button {
-            min-height: 49px;
-            border-radius: 12px;
-            padding: 10px 7px;
-            font-weight: 800;
-        }
-
-        .ball-button {
-            background: #15803d;
-        }
-
-        .strike-button {
-            background: #ca8a04;
-        }
-
-        .foul-button {
-            background: #ea580c;
-        }
-
-        .swing-button {
-            background: #7c3aed;
-        }
-
-        .result-buttons button {
-            background: #334155;
-        }
-
-        .result-buttons button.selected {
-            outline: 3px solid var(--yellow);
-            background: #475569;
-        }
-
-        .save-button {
-            background: var(--blue);
-        }
-
-        .cancel-button {
-            background: #475569;
-        }
-
-        .tee-status {
-            display: none;
-            margin: 12px 0 0;
-            border: 1px solid #854d0e;
-            background: rgba(133, 77, 14, 0.22);
-            color: #fde68a;
-            border-radius: 12px;
-            padding: 11px;
-            font-weight: 800;
-        }
-
-        .tee-status.active {
-            display: block;
-        }
-
-        .pitch-history {
-            min-height: 48px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 7px;
-            margin-top: 12px;
-            padding: 10px;
-            border-radius: 12px;
-            background: rgba(0, 0, 0, 0.2);
-            color: var(--muted);
-        }
-
-        .pitch-chip {
-            display: inline-flex;
-            align-items: center;
-            border-radius: 999px;
-            padding: 6px 9px;
-            color: white;
-            font-size: 13px;
-            font-weight: 800;
-        }
-
-        .pitch-chip.ball {
-            background: #15803d;
-        }
-
-        .pitch-chip.strike {
-            background: #ca8a04;
-        }
-
-        .pitch-chip.foul {
-            background: #ea580c;
-        }
-
-        .pitch-chip.swing {
-            background: #7c3aed;
-        }
-
-        .diamond-wrap {
-            display: grid;
-            place-items: center;
-            min-height: 240px;
-        }
-
-        .diamond {
-            position: relative;
-            width: 180px;
-            height: 180px;
-            transform: rotate(45deg);
-        }
-
-        .base {
-            position: absolute;
-            width: 49px;
-            height: 49px;
-            border: 3px solid #64748b;
-            background: #18263a;
-            border-radius: 7px;
-            transition: 0.18s;
-        }
-
-        .base.active {
-            background: var(--yellow);
-            border-color: #fef08a;
-            box-shadow: 0 0 18px rgba(250, 204, 21, 0.7);
-        }
-
-        .base-1 {
-            right: 0;
-            bottom: 0;
-        }
-
-        .base-2 {
-            right: 0;
-            top: 0;
-        }
-
-        .base-3 {
-            left: 0;
-            top: 0;
-        }
-
-        .home-plate {
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 49px;
-            height: 49px;
-            border: 3px solid white;
-            background: white;
-            border-radius: 7px;
-        }
-
-        .base-labels {
-            text-align: center;
-            color: var(--muted);
-            font-size: 14px;
-            margin-top: -10px;
-        }
-
-        .input-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 14px;
-        }
-
-        .field {
-            display: grid;
-            gap: 6px;
-        }
-
-        .field.full {
-            grid-column: 1 / -1;
-        }
-
-        .field label {
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .field input,
-        .field select,
-        .field textarea {
-            width: 100%;
-            border: 1px solid var(--line);
-            background: #091525;
-            color: white;
-            border-radius: 11px;
-            padding: 11px;
-        }
-
-        .field textarea {
-            min-height: 70px;
-            resize: vertical;
-        }
-
-        .selected-result {
-            margin-top: 12px;
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            padding: 11px;
-            text-align: center;
-            font-weight: 800;
-        }
-
-        .lineups {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-top: 14px;
-        }
-
-        .lineup-list {
-            display: grid;
-            gap: 7px;
-        }
-
-        .lineup-row {
-            display: grid;
-            grid-template-columns: 35px 1fr 90px;
-            align-items: center;
-            gap: 7px;
-        }
-
-        .lineup-row.current {
-            background: rgba(250, 204, 21, 0.12);
-            border-radius: 10px;
-            padding: 4px;
-        }
-
-        .lineup-row input,
-        .lineup-row select {
-            min-width: 0;
-            border: 1px solid var(--line);
-            background: #091525;
-            color: white;
-            border-radius: 9px;
-            padding: 8px;
-        }
-
-        .lineup-number {
-            text-align: center;
-            color: var(--muted);
-            font-weight: 800;
-        }
-
-        .lineup-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .lineup-actions button {
-            flex: 1;
-            border-radius: 11px;
-            padding: 11px;
-            background: #334155;
-        }
-
-        .current-batter-panel {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 9px;
-            margin-bottom: 14px;
-        }
-
-        .current-batter-panel div {
-            padding: 11px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-        }
-
-        .current-batter-panel span {
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .current-batter-panel strong {
-            display: block;
-            margin-top: 4px;
-        }
-
-        .records-card {
-            margin-top: 14px;
-        }
-
-        .record-list {
-            display: grid;
-            gap: 9px;
-            max-height: 430px;
-            overflow: auto;
-        }
-
-        .record-item {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            gap: 10px;
-            align-items: center;
-            padding: 11px;
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            background: rgba(0, 0, 0, 0.16);
-        }
-
-        .record-inning {
-            color: var(--yellow);
-            font-weight: 900;
-        }
-
-        .record-main strong {
-            display: block;
-        }
-
-        .record-main small {
-            color: var(--muted);
-        }
-
-        .record-score {
-            font-weight: 900;
-        }
-
-        .empty {
-            color: var(--muted);
-            text-align: center;
-            padding: 20px;
-        }
-
-        @media (max-width: 820px) {
-            .scoreboard {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .inning-box {
-                grid-column: 1 / -1;
-                grid-row: 1;
-            }
-
-            .main-grid,
-            .lineups {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 540px) {
-            .app {
-                padding-left: 10px;
-                padding-right: 10px;
-            }
-
-            .header {
-                align-items: flex-start;
-            }
-
-            .pitch-buttons {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .result-buttons {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .input-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .field.full {
-                grid-column: auto;
-            }
-
-            .lineup-row {
-                grid-template-columns: 30px 1fr 80px;
-            }
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
-    <main class="app">
-        <header class="header">
-            <div>
-                <h1>⚾ DiamondVision</h1>
-                <p>야구 경기 기록 및 티바 규칙 시스템</p>
+    <div class="app-shell">
+
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-icon">
+                    ⚾
+                </div>
+
+                <div>
+                    <h1>DIAMOND VISION</h1>
+                    <p>BASEBALL ANALYTICS</p>
+                </div>
             </div>
 
-            <button
-                class="reset-game-button"
-                type="button"
-                onclick="resetGame()"
-            >
-                경기 초기화
-            </button>
+            <nav class="topnav">
+                <button class="active">
+                    경기 분석
+                </button>
+
+                <button>
+                    선수 분석
+                </button>
+
+                <button>
+                    팀 분석
+                </button>
+
+                <button>
+                    리포트
+                </button>
+            </nav>
+
+            <div class="live-wrap">
+                <span id="todayDate"></span>
+
+                <span class="live-dot">
+                    ● LIVE
+                </span>
+            </div>
         </header>
 
-        <section class="scoreboard card">
-            <div class="team-box away-box">
-                <input
-                    id="awayTeamName"
-                    value="AWAY"
-                    aria-label="원정팀 이름"
-                >
 
-                <div
-                    id="awayScore"
-                    class="team-score"
-                >
-                    0
-                </div>
-            </div>
+        <aside class="sidebar">
+            <h3>경기 관리</h3>
 
-            <div class="inning-box">
-                <div
-                    id="inningDisplay"
-                >
-                    1회초
-                </div>
+            <button
+                class="side active"
+                data-scroll="liveSection"
+            >
+                ▦ 실시간 분석
+            </button>
 
-                <div
-                    id="offenseDisplay"
-                    class="offense-label"
-                >
-                    AWAY 공격
-                </div>
+            <button
+                class="side"
+                data-scroll="recordSection"
+            >
+                ▤ 경기 기록
+            </button>
 
-                <div class="inning-controls">
-                    <button
-                        type="button"
-                        onclick="previousHalfInning()"
+            <button
+                class="side"
+                data-scroll="teamSection"
+            >
+                ⌁ 상대 전력
+            </button>
+
+            <h3>데이터</h3>
+
+            <button
+                class="side"
+                data-scroll="lineupSection"
+            >
+                ♙ 선수 데이터
+            </button>
+
+            <button
+                class="side"
+                data-scroll="videoSection"
+            >
+                ▣ 영상 관리
+            </button>
+
+            <h3>분석 도구</h3>
+
+            <button
+                class="side"
+                data-scroll="dashboardSection"
+            >
+                ▥ 스탯 대시보드
+            </button>
+
+            <button
+                class="side"
+                data-scroll="chartsSection"
+            >
+                ⌁ 차트 분석
+            </button>
+
+            <button
+                class="side"
+                data-scroll="reportSection"
+            >
+                ▧ 리포트 생성
+            </button>
+        </aside>
+
+
+        <main class="content">
+
+            <section
+                id="liveSection"
+                class="scoreboard panel"
+            >
+                <div class="team home">
+                    <span>HOME</span>
+
+                    <input
+                        id="homeTeamName"
+                        value="레드 이글스"
                     >
-                        이전
-                    </button>
 
-                    <button
-                        type="button"
-                        onclick="nextHalfInning()"
-                    >
-                        다음
-                    </button>
-                </div>
-            </div>
-
-            <div class="team-box home-box">
-                <input
-                    id="homeTeamName"
-                    value="HOME"
-                    aria-label="홈팀 이름"
-                >
-
-                <div
-                    id="homeScore"
-                    class="team-score"
-                >
-                    0
-                </div>
-            </div>
-        </section>
-
-        <section class="main-grid">
-            <div class="card">
-                <h2 class="section-title">
-                    경기 기록
-                </h2>
-
-                <div class="count-grid">
-                    <div class="count-box ball-count">
-                        <span>BALL</span>
-                        <strong id="ballCount">0</strong>
-                    </div>
-
-                    <div class="count-box strike-count">
-                        <span>STRIKE</span>
-                        <strong id="strikeCount">0</strong>
-                    </div>
-
-                    <div class="count-box out-count">
-                        <span>OUT</span>
-                        <strong id="outCount">0</strong>
-                    </div>
-                </div>
-
-                <div class="pitch-buttons">
-                    <button
-                        class="ball-button"
-                        type="button"
-                        onclick="addPitch('B')"
-                    >
-                        볼
-                    </button>
-
-                    <button
-                        class="strike-button"
-                        type="button"
-                        onclick="addPitch('S')"
-                    >
-                        스트라이크
-                    </button>
-
-                    <button
-                        class="foul-button"
-                        type="button"
-                        onclick="addPitch('F')"
-                    >
-                        파울
-                    </button>
-
-                    <button
-                        class="swing-button"
-                        type="button"
-                        onclick="addPitch('SW')"
-                    >
-                        헛스윙
-                    </button>
+                    <strong id="homeScore">
+                        0
+                    </strong>
                 </div>
 
-                <div
-                    id="teeStatus"
-                    class="tee-status"
-                >
-                    티바 타격 대기
-                </div>
 
-                <div
-                    id="pitchHistory"
-                    class="pitch-history"
-                >
-                    아직 투구 기록이 없습니다.
-                </div>
-
-                <div class="result-buttons">
-                    <button
-                        type="button"
-                        data-result="안타"
-                        onclick="selectResult('안타')"
-                    >
-                        안타
-                    </button>
-
-                    <button
-                        type="button"
-                        data-result="2루타"
-                        onclick="selectResult('2루타')"
-                    >
-                        2루타
-                    </button>
-
-                    <button
-                        type="button"
-                        data-result="3루타"
-                        onclick="selectResult('3루타')"
-                    >
-                        3루타
-                    </button>
-
-                    <button
-                        type="button"
-                        data-result="홈런"
-                        onclick="selectResult('홈런')"
-                    >
-                        홈런
-                    </button>
-
-                    <button
-                        type="button"
-                        data-result="땅볼"
-                        onclick="selectResult('땅볼')"
-                    >
-                        땅볼
-                    </button>
-
-                    <button
-                        type="button"
-                        data-result="뜬공"
-                        onclick="selectResult('뜬공')"
-                    >
-                        뜬공
-                    </button>
-
-                    <button
-                        type="button"
-                        data-result="실책"
-                        onclick="selectResult('실책')"
-                    >
-                        실책
-                    </button>
-
-                    <button
-                        type="button"
-                        data-result="희생플라이"
-                        onclick="selectResult('희생플라이')"
-                    >
-                        희생플라이
-                    </button>
-
-                    <button
-                        type="button"
-                        data-result="데드볼"
-                        onclick="selectResult('데드볼')"
-                    >
-                        데드볼
-                    </button>
-                </div>
-
-                <div
-                    id="selectedResult"
-                    class="selected-result"
-                >
-                    선택 결과: 없음
-                </div>
-                                <div class="input-grid">
-                    <div class="field">
-                        <label for="pitcherName">투수 이름</label>
-                        <input
-                            id="pitcherName"
-                            type="text"
-                            placeholder="투수 이름"
-                        >
-                    </div>
-
-                    <div class="field">
-                        <label for="batterName">타자 이름</label>
-                        <input
-                            id="batterName"
-                            type="text"
-                            placeholder="타자 이름"
-                        >
-                    </div>
-
-                    <div class="field">
-                        <label for="batterSide">타석</label>
-                        <select id="batterSide">
-                            <option value="우타">우타</option>
-                            <option value="좌타">좌타</option>
-                            <option value="양타">양타</option>
-                        </select>
-                    </div>
-
-                    <div class="field">
-                        <label for="runScored">득점</label>
-                        <input
-                            id="runScored"
-                            type="number"
-                            min="0"
-                            max="9"
-                            value="0"
-                        >
-                    </div>
-
-                    <div class="field">
-                        <label for="rbi">타점</label>
-                        <input
-                            id="rbi"
-                            type="number"
-                            min="0"
-                            max="9"
-                            value="0"
-                        >
-                    </div>
-
-                    <div class="field full">
-                        <label for="playNote">메모</label>
-                        <textarea
-                            id="playNote"
-                            placeholder="플레이 메모"
-                        ></textarea>
-                    </div>
-                </div>
-
-                <div class="save-buttons">
-                    <button
-                        class="save-button"
-                        type="button"
-                        onclick="savePlateAppearance()"
-                    >
-                        타석 저장
-                    </button>
-
-                    <button
-                        class="cancel-button"
-                        type="button"
-                        onclick="undoLastPlateAppearance()"
-                    >
-                        최근 기록 취소
-                    </button>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2 class="section-title">
-                    주자와 타순
-                </h2>
-
-                <div class="current-batter-panel">
-                    <div>
-                        <span>현재 타자</span>
-                        <strong id="currentBatterDisplay">
-                            라인업 없음
-                        </strong>
-                    </div>
-
-                    <div>
-                        <span>다음 타자</span>
-                        <strong id="nextBatterDisplay">
-                            -
-                        </strong>
-                    </div>
-                </div>
-
-                <div class="diamond-wrap">
-                    <div class="diamond">
+                <div class="center-board">
+                    <div class="inning-row">
                         <button
-                            id="base1"
-                            class="base base-1"
                             type="button"
-                            onclick="toggleBase('first')"
-                            aria-label="1루"
-                        ></button>
+                            onclick="previousInning()"
+                        >
+                            ◀
+                        </button>
 
+                        <strong id="inningDisplay">
+                            1회초
+                        </strong>
+
+                        <button
+                            type="button"
+                            onclick="nextInning()"
+                        >
+                            ▶
+                        </button>
+                    </div>
+
+
+                    <div class="bases">
                         <button
                             id="base2"
-                            class="base base-2"
                             type="button"
                             onclick="toggleBase('second')"
                             aria-label="2루"
@@ -990,1568 +178,746 @@
 
                         <button
                             id="base3"
-                            class="base base-3"
                             type="button"
                             onclick="toggleBase('third')"
                             aria-label="3루"
                         ></button>
 
-                        <div class="home-plate"></div>
+                        <button
+                            id="base1"
+                            type="button"
+                            onclick="toggleBase('first')"
+                            aria-label="1루"
+                        ></button>
+                    </div>
+
+
+                    <div class="count-row">
+                        <div>
+                            B
+                            <b id="ballCount">0</b>
+                        </div>
+
+                        <div>
+                            S
+                            <b id="strikeCount">0</b>
+                        </div>
+
+                        <div>
+                            O
+                            <b id="outCount">0</b>
+                        </div>
                     </div>
                 </div>
 
-                <div class="base-labels">
-                    베이스를 눌러 주자 위치를 직접 수정할 수 있어용
-                </div>
-            </div>
-        </section>
 
-        <section class="lineups">
-            <div class="card">
-                <h2 class="section-title">
-                    AWAY 라인업
-                </h2>
+                <div class="team away">
+                    <strong id="awayScore">
+                        0
+                    </strong>
+
+                    <input
+                        id="awayTeamName"
+                        value="블루 타이거즈"
+                    >
+
+                    <span>AWAY</span>
+                </div>
+            </section>
+
+
+            <section class="current-strip panel">
+                <div>
+                    <span>현재 공격팀</span>
+
+                    <strong id="currentOffenseTeam">
+                        AWAY
+                    </strong>
+                </div>
+
+                <div>
+                    <span>현재 타자</span>
+
+                    <strong id="currentBatterDisplay">
+                        라인업 없음
+                    </strong>
+                </div>
+
+                <div>
+                    <span>다음 타자</span>
+
+                    <strong id="nextBatterDisplay">
+                        -
+                    </strong>
+                </div>
+
+                <button
+                    type="button"
+                    onclick="toggleLineupPanel()"
+                >
+                    라인업 설정
+                </button>
+            </section>
+
+
+            <section class="two-col">
 
                 <div
-                    id="awayLineup"
-                    class="lineup-list"
-                ></div>
-            </div>
+                    id="videoSection"
+                    class="panel"
+                >
+                    <div class="section-kicker">
+                        GAME VIDEO
+                    </div>
 
-            <div class="card">
-                <h2 class="section-title">
-                    HOME 라인업
-                </h2>
+                    <h2>경기 영상 분석</h2>
 
-                <div
-                    id="homeLineup"
-                    class="lineup-list"
-                ></div>
-            </div>
-        </section>
+                    <div class="youtube-row">
+                        <input
+                            id="youtubeUrl"
+                            placeholder="유튜브 영상 주소 붙여넣기"
+                        >
 
-        <section class="card records-card">
-            <h2 class="section-title">
-                최근 타석 기록
-            </h2>
-
-            <div
-                id="recordList"
-                class="record-list"
-            >
-                <div class="empty">
-                    아직 기록이 없습니다.
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <script>
-        "use strict";
-
-        const STORAGE_KEY =
-            "diamondVisionSingleFileV1";
-
-        const state = {
-            currentInning: 1,
-            isTopInning: true,
-
-            ballCount: 0,
-            strikeCount: 0,
-            outCount: 0,
-
-            homeScore: 0,
-            awayScore: 0,
-
-            baseState: {
-                first: false,
-                second: false,
-                third: false
-            },
-
-            currentPitchSequence: [],
-            selectedResult: "",
-
-            isTeeMode: false,
-            teeReason: "",
-
-            lineups: {
-                home: [],
-                away: []
-            },
-
-            battingOrderIndex: {
-                home: 0,
-                away: 0
-            },
-
-            records: []
-        };
-
-        function getElement(id) {
-            return document.getElementById(id);
-        }
-
-        function getCurrentOffenseKey() {
-            return state.isTopInning
-                ? "away"
-                : "home";
-        }
-
-        function getTeamName(teamKey) {
-            const element =
-                getElement(
-                    teamKey === "home"
-                        ? "homeTeamName"
-                        : "awayTeamName"
-                );
-
-            return (
-                element?.value.trim() ||
-                teamKey.toUpperCase()
-            );
-        }
-
-        function getValidPlayers(teamKey) {
-            return (
-                state.lineups[teamKey] || []
-            ).filter(player => player.name);
-        }
-
-        function getCurrentBatter(teamKey) {
-            const players =
-                getValidPlayers(teamKey);
-
-            if (players.length === 0) {
-                return null;
-            }
-
-            const index =
-                state.battingOrderIndex[teamKey] %
-                players.length;
-
-            return players[index];
-        }
-
-        function getNextBatter(teamKey) {
-            const players =
-                getValidPlayers(teamKey);
-
-            if (players.length === 0) {
-                return null;
-            }
-
-            const index =
-                (
-                    state.battingOrderIndex[teamKey] + 1
-                ) % players.length;
-
-            return players[index];
-        }
-
-        function renderLineupInputs() {
-            renderLineupTeam("away");
-            renderLineupTeam("home");
-        }
-
-        function renderLineupTeam(teamKey) {
-            const container =
-                getElement(
-                    teamKey === "home"
-                        ? "homeLineup"
-                        : "awayLineup"
-                );
-
-            if (!container) return;
-
-            container.innerHTML = "";
-
-            for (
-                let order = 1;
-                order <= 9;
-                order += 1
-            ) {
-                const savedPlayer =
-                    state.lineups[teamKey]
-                        .find(
-                            player =>
-                                player.order === order
-                        ) || {
-                            order: order,
-                            name: "",
-                            position: ""
-                        };
-
-                const row =
-                    document.createElement("div");
-
-                row.className =
-                    "lineup-row";
-
-                row.dataset.team =
-                    teamKey;
-
-                row.dataset.order =
-                    String(order);
-
-                row.innerHTML = `
-                    <div class="lineup-number">
-                        ${order}
+                        <button
+                            type="button"
+                            onclick="loadYouTubeVideo()"
+                        >
+                            유튜브 불러오기
+                        </button>
                     </div>
 
                     <input
-                        type="text"
-                        value="${escapeHtml(savedPlayer.name)}"
-                        placeholder="선수 이름"
-                        aria-label="${teamKey} ${order}번 선수"
+                        type="file"
+                        accept="video/*"
+                        onchange="loadVideo(event)"
                     >
 
-                    <select aria-label="${teamKey} ${order}번 포지션">
-                        ${createPositionOptions(savedPlayer.position)}
-                    </select>
-                `;
+                    <div class="video-wrap">
+                        <video
+                            id="video"
+                            controls
+                        ></video>
 
-                const nameInput =
-                    row.querySelector("input");
-
-                const positionSelect =
-                    row.querySelector("select");
-
-                nameInput.addEventListener(
-                    "input",
-                    function () {
-                        saveLineupRow(
-                            teamKey,
-                            order,
-                            nameInput.value,
-                            positionSelect.value
-                        );
-                    }
-                );
-
-                positionSelect.addEventListener(
-                    "change",
-                    function () {
-                        saveLineupRow(
-                            teamKey,
-                            order,
-                            nameInput.value,
-                            positionSelect.value
-                        );
-                    }
-                );
-
-                container.appendChild(row);
-            }
-
-            highlightCurrentBatter();
-        }
-
-        function createPositionOptions(
-            selectedPosition
-        ) {
-            const positions = [
-                "",
-                "투수",
-                "포수",
-                "1루수",
-                "2루수",
-                "3루수",
-                "유격수",
-                "좌익수",
-                "중견수",
-                "우익수",
-                "지명타자"
-            ];
-
-            return positions
-                .map(position => {
-                    const selected =
-                        position === selectedPosition
-                            ? "selected"
-                            : "";
-
-                    const label =
-                        position || "포지션";
-
-                    return `
-                        <option
-                            value="${escapeHtml(position)}"
-                            ${selected}
+                        <div
+                            id="youtubePlayerWrap"
+                            hidden
                         >
-                            ${escapeHtml(label)}
-                        </option>
-                    `;
-                })
-                .join("");
-        }
-
-        function saveLineupRow(
-            teamKey,
-            order,
-            name,
-            position
-        ) {
-            const lineup =
-                state.lineups[teamKey];
-
-            const existingIndex =
-                lineup.findIndex(
-                    player =>
-                        player.order === order
-                );
-
-            const player = {
-                order: order,
-                name: name.trim(),
-                position: position
-            };
-
-            if (existingIndex >= 0) {
-                lineup[existingIndex] =
-                    player;
-            } else {
-                lineup.push(player);
-            }
-
-            lineup.sort(
-                (a, b) =>
-                    a.order - b.order
-            );
-
-            clampBattingOrder(teamKey);
-            updateCurrentBatterDisplay();
-            saveState();
-        }
-
-        function clampBattingOrder(teamKey) {
-            const players =
-                getValidPlayers(teamKey);
-
-            if (players.length === 0) {
-                state.battingOrderIndex[teamKey] = 0;
-                return;
-            }
-
-            if (
-                state.battingOrderIndex[teamKey] >=
-                players.length
-            ) {
-                state.battingOrderIndex[teamKey] = 0;
-            }
-        }
-
-        function updateCurrentBatterDisplay() {
-            const offenseKey =
-                getCurrentOffenseKey();
-
-            const currentBatter =
-                getCurrentBatter(offenseKey);
-
-            const nextBatter =
-                getNextBatter(offenseKey);
-
-            const currentElement =
-                getElement(
-                    "currentBatterDisplay"
-                );
-
-            const nextElement =
-                getElement(
-                    "nextBatterDisplay"
-                );
-
-            if (currentElement) {
-                currentElement.textContent =
-                    currentBatter
-                        ? `${currentBatter.order}번 ${currentBatter.name}`
-                        : "라인업 없음";
-            }
-
-            if (nextElement) {
-                nextElement.textContent =
-                    nextBatter
-                        ? `${nextBatter.order}번 ${nextBatter.name}`
-                        : "-";
-            }
-
-            const batterInput =
-                getElement("batterName");
-
-            if (
-                batterInput &&
-                currentBatter
-            ) {
-                batterInput.value =
-                    currentBatter.name;
-            }
-
-            highlightCurrentBatter();
-        }
-
-        function highlightCurrentBatter() {
-            document
-                .querySelectorAll(
-                    ".lineup-row"
-                )
-                .forEach(row => {
-                    row.classList.remove(
-                        "current"
-                    );
-                });
-
-            const offenseKey =
-                getCurrentOffenseKey();
-
-            const currentBatter =
-                getCurrentBatter(
-                    offenseKey
-                );
-
-            if (!currentBatter) return;
-
-            const row =
-                document.querySelector(
-                    `.lineup-row[data-team="${offenseKey}"][data-order="${currentBatter.order}"]`
-                );
-
-            row?.classList.add(
-                "current"
-            );
-        }
-
-        function advanceBattingOrder() {
-            const offenseKey =
-                getCurrentOffenseKey();
-
-            const players =
-                getValidPlayers(offenseKey);
-
-            if (players.length === 0) {
-                return;
-            }
-
-            state.battingOrderIndex[
-                offenseKey
-            ] =
-                (
-                    state.battingOrderIndex[
-                        offenseKey
-                    ] + 1
-                ) % players.length;
-        }
-
-        function updateScreen() {
-            getElement(
-                "inningDisplay"
-            ).textContent =
-                `${state.currentInning}회${state.isTopInning ? "초" : "말"}`;
-
-            getElement(
-                "offenseDisplay"
-            ).textContent =
-                `${getTeamName(getCurrentOffenseKey())} 공격`;
-
-            getElement(
-                "ballCount"
-            ).textContent =
-                String(state.ballCount);
-
-            getElement(
-                "strikeCount"
-            ).textContent =
-                String(state.strikeCount);
-
-            getElement(
-                "outCount"
-            ).textContent =
-                String(state.outCount);
-
-            getElement(
-                "homeScore"
-            ).textContent =
-                String(state.homeScore);
-
-            getElement(
-                "awayScore"
-            ).textContent =
-                String(state.awayScore);
-
-            updateBaseDisplay();
-            updatePitchHistory();
-            updateSelectedResult();
-            updateTeeStatus();
-            updateResultButtons();
-            updateCurrentBatterDisplay();
-            renderRecords();
-        }
-
-        function updateBaseDisplay() {
-            getElement("base1")
-                .classList.toggle(
-                    "active",
-                    state.baseState.first
-                );
-
-            getElement("base2")
-                .classList.toggle(
-                    "active",
-                    state.baseState.second
-                );
-
-            getElement("base3")
-                .classList.toggle(
-                    "active",
-                    state.baseState.third
-                );
-        }
-
-        function toggleBase(baseName) {
-            state.baseState[baseName] =
-                !state.baseState[baseName];
-
-            updateBaseDisplay();
-            saveState();
-        }
-
-        function updatePitchHistory() {
-            const container =
-                getElement("pitchHistory");
-
-            if (
-                state.currentPitchSequence.length ===
-                0
-            ) {
-                container.textContent =
-                    "아직 투구 기록이 없습니다.";
-
-                return;
-            }
-
-            container.innerHTML =
-                state.currentPitchSequence
-                    .map(pitch => {
-                        const display =
-                            pitch === "TF"
-                                ? "티바 파울"
-                                : pitch;
-
-                        let className =
-                            "strike";
-
-                        if (pitch === "B") {
-                            className = "ball";
-                        }
-
-                        if (
-                            pitch === "F" ||
-                            pitch === "TF"
-                        ) {
-                            className = "foul";
-                        }
-
-                        if (pitch === "SW") {
-                            className = "swing";
-                        }
-
-                        return `
-                            <span class="pitch-chip ${className}">
-                                ${escapeHtml(display)}
-                            </span>
-                        `;
-                    })
-                    .join("");
-        }
-
-        function updateSelectedResult() {
-            const element =
-                getElement(
-                    "selectedResult"
-                );
-
-            element.textContent =
-                `선택 결과: ${
-                    state.selectedResult ||
-                    "없음"
-                }`;
-        }
-
-        function updateTeeStatus() {
-            const element =
-                getElement("teeStatus");
-
-            if (!state.isTeeMode) {
-                element.classList.remove(
-                    "active"
-                );
-
-                element.textContent =
-                    "티바 타격 대기";
-
-                return;
-            }
-
-            element.classList.add(
-                "active"
-            );
-
-            const reason =
-                state.teeReason === "데드볼"
-                    ? "데드볼"
-                    : "볼 4개";
-
-            element.textContent =
-                `${reason}로 티바 전환 · 현재 ${state.strikeCount}스트라이크`;
-        }
-
-        function updateResultButtons() {
-            document
-                .querySelectorAll(
-                    ".result-buttons button"
-                )
-                .forEach(button => {
-                    const result =
-                        button.dataset.result;
-
-                    const isBlocked =
-                        state.isTeeMode &&
-                        (
-                            result === "홈런" ||
-                            result === "데드볼"
-                        );
-
-                    button.disabled =
-                        isBlocked;
-
-                    button.classList.toggle(
-                        "selected",
-                        state.selectedResult === result ||
-                        state.selectedResult ===
-                            `티바 ${result}`
-                    );
-                });
-        }
-
-        function enterTeeMode(reason) {
-            state.isTeeMode = true;
-            state.teeReason = reason;
-            state.selectedResult = "";
-
-            updateScreen();
-            saveState();
-        }
-
-        function addPitch(type) {
-            if (
-                state.selectedResult ===
-                "티바 파울 아웃"
-            ) {
-                alert(
-                    "티바 파울 아웃이 확정됐습니다. 타석 저장을 눌러줘용."
-                );
-
-                return;
-            }
-
-            if (state.isTeeMode) {
-                if (type !== "F") {
-                    alert(
-                        "현재 티바 타격 중이에용. 파울 또는 타격 결과를 선택해줘용."
-                    );
-
-                    return;
-                }
-
-                state.currentPitchSequence.push(
-                    "TF"
-                );
-
-                state.strikeCount += 1;
-
-                if (
-                    state.strikeCount >= 3
-                ) {
-                    state.strikeCount = 3;
-
-                    state.selectedResult =
-                        "티바 파울 아웃";
-                }
-
-                updateScreen();
-                saveState();
-
-                return;
-            }
-
-            state.currentPitchSequence.push(
-                type
-            );
-
-            if (type === "B") {
-                state.ballCount += 1;
-
-                if (
-                    state.ballCount >= 4
-                ) {
-                    state.ballCount = 4;
-
-                    enterTeeMode(
-                        "볼넷"
-                    );
-
-                    return;
-                }
-            }
-
-            if (
-                type === "S" ||
-                type === "SW"
-            ) {
-                state.strikeCount += 1;
-
-                if (
-                    state.strikeCount >= 3
-                ) {
-                    state.strikeCount = 3;
-
-                    state.selectedResult =
-                        "삼진";
-                }
-            }
-
-            if (
-                type === "F" &&
-                state.strikeCount < 2
-            ) {
-                state.strikeCount += 1;
-            }
-
-            updateScreen();
-            saveState();
-        }
-
-        function selectResult(result) {
-            if (
-                state.selectedResult ===
-                "티바 파울 아웃"
-            ) {
-                alert(
-                    "티바 파울 아웃이 확정됐어용."
-                );
-
-                return;
-            }
-
-            if (result === "데드볼") {
-                if (state.isTeeMode) {
-                    return;
-                }
-
-                enterTeeMode(
-                    "데드볼"
-                );
-
-                return;
-            }
-
-            if (
-                state.isTeeMode &&
-                result === "홈런"
-            ) {
-                alert(
-                    "티바 타격에는 홈런이 없어용."
-                );
-
-                return;
-            }
-
-            state.selectedResult =
-                state.isTeeMode
-                    ? `티바 ${result}`
-                    : result;
-
-            updateScreen();
-            saveState();
-        }
-                function normalizeResult(result) {
-            return String(result || "")
-                .replace(/^티바\s*/, "")
-                .trim();
-        }
-
-        function countBaseRunners() {
-            return (
-                Number(state.baseState.first) +
-                Number(state.baseState.second) +
-                Number(state.baseState.third)
-            );
-        }
-
-        function addRuns(runs) {
-            const value =
-                Math.max(
-                    0,
-                    Number(runs) || 0
-                );
-
-            if (value <= 0) {
-                return;
-            }
-
-            if (state.isTopInning) {
-                state.awayScore += value;
-            } else {
-                state.homeScore += value;
-            }
-        }
-
-        function advanceRunners(baseAmount) {
-            const oldBases = {
-                ...state.baseState
-            };
-
-            const nextBases = {
-                first: false,
-                second: false,
-                third: false
-            };
-
-            if (baseAmount === 1) {
-                if (oldBases.first) {
-                    nextBases.second = true;
-                }
-
-                if (oldBases.second) {
-                    nextBases.third = true;
-                }
-            }
-
-            if (baseAmount === 2) {
-                if (oldBases.first) {
-                    nextBases.third = true;
-                }
-            }
-
-            state.baseState =
-                nextBases;
-        }
-
-        function applyPlateResult(
-            result,
-            runs,
-            teeModeAtSave
-        ) {
-            const normalized =
-                normalizeResult(result);
-
-            let addedOuts = 0;
-
-            switch (normalized) {
-                case "안타":
-                    advanceRunners(1);
-                    state.baseState.first = true;
-                    break;
-
-                case "2루타":
-                    advanceRunners(2);
-                    state.baseState.second = true;
-                    break;
-
-                case "3루타":
-                    advanceRunners(3);
-                    state.baseState.third = true;
-                    break;
-
-                case "홈런":
-                    if (teeModeAtSave) {
-                        return;
-                    }
-
-                    state.baseState = {
-                        first: false,
-                        second: false,
-                        third: false
-                    };
-                    break;
-
-                case "삼진":
-                case "티바 파울 아웃":
-                case "땅볼":
-                case "뜬공":
-                case "희생플라이":
-                    addedOuts = 1;
-                    break;
-
-                case "실책":
-                    state.baseState.first = true;
-                    break;
-
-                default:
-                    break;
-            }
-
-            state.outCount +=
-                addedOuts;
-
-            if (state.outCount > 3) {
-                state.outCount = 3;
-            }
-
-            addRuns(runs);
-        }
-
-        function savePlateAppearance() {
-            const pitcherName =
-                getElement("pitcherName")
-                    .value
-                    .trim();
-
-            const batterName =
-                getElement("batterName")
-                    .value
-                    .trim();
-
-            const batterSide =
-                getElement("batterSide")
-                    .value;
-
-            const enteredRuns =
-                Math.max(
-                    0,
-                    Number(
-                        getElement("runScored")
-                            .value
-                    ) || 0
-                );
-
-            const rbi =
-                Math.max(
-                    0,
-                    Number(
-                        getElement("rbi")
-                            .value
-                    ) || 0
-                );
-
-            const note =
-                getElement("playNote")
-                    .value
-                    .trim();
-
-            if (!pitcherName) {
-                alert(
-                    "투수 이름을 입력해줘용."
-                );
-
-                return;
-            }
-
-            if (!batterName) {
-                alert(
-                    "타자 이름을 입력해줘용."
-                );
-
-                return;
-            }
-
-            if (!state.selectedResult) {
-                alert(
-                    "타석 결과를 선택해줘용."
-                );
-
-                return;
-            }
-
-            const normalized =
-                normalizeResult(
-                    state.selectedResult
-                );
-
-            let actualRuns =
-                enteredRuns;
-
-            if (
-                normalized === "홈런" &&
-                !state.isTeeMode
-            ) {
-                actualRuns =
-                    countBaseRunners() + 1;
-            }
-
-            const offenseKey =
-                getCurrentOffenseKey();
-
-            const currentBatter =
-                getCurrentBatter(
-                    offenseKey
-                );
-
-            const record = {
-                inning:
-                    `${state.currentInning}회${state.isTopInning ? "초" : "말"}`,
-
-                team:
-                    getTeamName(
-                        offenseKey
-                    ),
-
-                batter:
-                    batterName,
-
-                pitcher:
-                    pitcherName,
-
-                batterSide:
-                    batterSide,
-
-                battingOrder:
-                    currentBatter
-                        ? currentBatter.order
-                        : null,
-
-                result:
-                    state.selectedResult,
-
-                runs:
-                    actualRuns,
-
-                rbi:
-                    rbi,
-
-                note:
-                    note,
-
-                pitches: [
-                    ...state.currentPitchSequence
-                ],
-
-                teeMode:
-                    state.isTeeMode,
-
-                teeReason:
-                    state.teeReason,
-
-                outsBefore:
-                    state.outCount,
-
-                basesBefore: {
-                    ...state.baseState
-                },
-
-                scoreBefore: {
-                    home:
-                        state.homeScore,
-
-                    away:
-                        state.awayScore
-                }
-            };
-
-            applyPlateResult(
-                state.selectedResult,
-                actualRuns,
-                state.isTeeMode
-            );
-
-            record.outsAfter =
-                state.outCount;
-
-            record.basesAfter = {
-                ...state.baseState
-            };
-
-            record.scoreAfter = {
-                home:
-                    state.homeScore,
-
-                away:
-                    state.awayScore
-            };
-
-            state.records.push(
-                record
-            );
-
-            advanceBattingOrder();
-
-            const reachedThreeOuts =
-                state.outCount >= 3;
-
-            resetCurrentPlate();
-
-            if (reachedThreeOuts) {
-                finishHalfInning();
-            }
-
-            updateScreen();
-            saveState();
-        }
-
-        function resetCurrentPlate() {
-            state.ballCount = 0;
-            state.strikeCount = 0;
-
-            state.currentPitchSequence = [];
-
-            state.selectedResult = "";
-
-            state.isTeeMode = false;
-            state.teeReason = "";
-
-            getElement(
-                "runScored"
-            ).value = "0";
-
-            getElement(
-                "rbi"
-            ).value = "0";
-
-            getElement(
-                "playNote"
-            ).value = "";
-        }
-
-        function finishHalfInning() {
-            state.ballCount = 0;
-            state.strikeCount = 0;
-            state.outCount = 0;
-
-            state.baseState = {
-                first: false,
-                second: false,
-                third: false
-            };
-
-            state.currentPitchSequence = [];
-            state.selectedResult = "";
-
-            state.isTeeMode = false;
-            state.teeReason = "";
-
-            if (state.isTopInning) {
-                state.isTopInning = false;
-            } else {
-                state.currentInning += 1;
-                state.isTopInning = true;
-            }
-        }
-
-        function nextHalfInning() {
-            finishHalfInning();
-            updateScreen();
-            saveState();
-        }
-
-        function previousHalfInning() {
-            state.ballCount = 0;
-            state.strikeCount = 0;
-            state.outCount = 0;
-
-            state.baseState = {
-                first: false,
-                second: false,
-                third: false
-            };
-
-            state.currentPitchSequence = [];
-            state.selectedResult = "";
-
-            state.isTeeMode = false;
-            state.teeReason = "";
-
-            if (!state.isTopInning) {
-                state.isTopInning = true;
-            } else if (
-                state.currentInning > 1
-            ) {
-                state.currentInning -= 1;
-                state.isTopInning = false;
-            }
-
-            updateScreen();
-            saveState();
-        }
-
-        function undoLastPlateAppearance() {
-            if (
-                state.records.length === 0
-            ) {
-                alert(
-                    "취소할 기록이 없어용."
-                );
-
-                return;
-            }
-
-            const record =
-                state.records.pop();
-
-            state.currentInning =
-                Number(
-                    record.inning.match(/\d+/)?.[0]
-                ) || 1;
-
-            state.isTopInning =
-                record.inning.includes("초");
-
-            state.outCount =
-                record.outsBefore;
-
-            state.baseState = {
-                ...record.basesBefore
-            };
-
-            state.homeScore =
-                record.scoreBefore.home;
-
-            state.awayScore =
-                record.scoreBefore.away;
-
-            const offenseKey =
-                getCurrentOffenseKey();
-
-            const players =
-                getValidPlayers(
-                    offenseKey
-                );
-
-            if (players.length > 0) {
-                state.battingOrderIndex[
-                    offenseKey
-                ] =
-                    (
-                        state.battingOrderIndex[
-                            offenseKey
-                        ] -
-                        1 +
-                        players.length
-                    ) % players.length;
-            }
-
-            resetCurrentPlate();
-
-            updateScreen();
-            saveState();
-        }
-
-        function renderRecords() {
-            const container =
-                getElement("recordList");
-
-            if (
-                state.records.length === 0
-            ) {
-                container.innerHTML = `
-                    <div class="empty">
-                        아직 기록이 없습니다.
+                            <div id="youtubePlayer"></div>
+                        </div>
                     </div>
-                `;
 
-                return;
-            }
+                    <div class="video-controls">
+                        <button
+                            type="button"
+                            onclick="back5()"
+                        >
+                            -5초
+                        </button>
 
-            container.innerHTML =
-                [...state.records]
-                    .reverse()
-                    .map(record => {
-                        const teeText =
-                            record.teeMode
-                                ? record.teeReason ===
-                                    "데드볼"
-                                    ? " · 데드볼→티바"
-                                    : " · 볼넷→티바"
-                                : "";
+                        <button
+                            type="button"
+                            onclick="playPause()"
+                        >
+                            재생 / 정지
+                        </button>
 
-                        const pitchText =
-                            record.pitches.length > 0
-                                ? record.pitches
-                                    .map(pitch =>
-                                        pitch === "TF"
-                                            ? "티바 파울"
-                                            : pitch
-                                    )
-                                    .join(" ")
-                                : "-";
+                        <button
+                            type="button"
+                            onclick="forward5()"
+                        >
+                            +5초
+                        </button>
 
-                        return `
-                            <div class="record-item">
-                                <div class="record-inning">
-                                    ${escapeHtml(record.inning)}
-                                </div>
+                        <button
+                            type="button"
+                            onclick="setVideoSpeed(0.5)"
+                        >
+                            0.5×
+                        </button>
 
-                                <div class="record-main">
-                                    <strong>
-                                        ${escapeHtml(record.batter)}
-                                        ·
-                                        ${escapeHtml(record.result)}
-                                    </strong>
+                        <button
+                            type="button"
+                            onclick="setVideoSpeed(1)"
+                        >
+                            1×
+                        </button>
 
-                                    <small>
-                                        ${escapeHtml(record.team)}
-                                        · 투수 ${escapeHtml(record.pitcher)}
-                                        · ${escapeHtml(pitchText)}
-                                        ${escapeHtml(teeText)}
-                                        · 득점 ${record.runs}
-                                    </small>
-                                </div>
+                        <button
+                            type="button"
+                            onclick="setVideoSpeed(2)"
+                        >
+                            2×
+                        </button>
+                    </div>
+                </div>
 
-                                <div class="record-score">
-                                    ${record.scoreAfter.away}
-                                    :
-                                    ${record.scoreAfter.home}
-                                </div>
+
+                <div class="panel scoring-panel">
+                    <div class="section-kicker">
+                        LIVE SCORING
+                    </div>
+
+                    <h2>타석 기록</h2>
+
+                    <div class="form-grid">
+                        <label>
+                            투수
+
+                            <input
+                                id="pitcherName"
+                                placeholder="투수 이름"
+                            >
+                        </label>
+
+                        <label>
+                            타자
+
+                            <input
+                                id="batterName"
+                                placeholder="타자 이름"
+                            >
+                        </label>
+
+                        <label>
+                            타석 방향
+
+                            <select id="batterSide">
+                                <option value="우타">
+                                    우타
+                                </option>
+
+                                <option value="좌타">
+                                    좌타
+                                </option>
+
+                                <option value="양타">
+                                    양타
+                                </option>
+                            </select>
+                        </label>
+                    </div>
+
+
+                    <h3>투구 기록</h3>
+
+                    <div class="pitch-buttons">
+                        <button
+                            type="button"
+                            onclick="addPitch('S')"
+                        >
+                            S 스트라이크
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="addPitch('B')"
+                        >
+                            B 볼
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="addPitch('F')"
+                        >
+                            F 파울
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="addPitch('SW')"
+                        >
+                            SW 헛스윙
+                        </button>
+                    </div>
+
+
+                    <div
+                        id="pitchSequence"
+                        class="sequence"
+                    >
+                        아직 투구 기록이 없습니다.
+                    </div>
+
+
+                    <h3>타석 결과</h3>
+
+                    <div class="result-buttons">
+                        <button
+                            type="button"
+                            onclick="setPlateResult('안타')"
+                        >
+                            안타
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="setPlateResult('2루타')"
+                        >
+                            2루타
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="setPlateResult('3루타')"
+                        >
+                            3루타
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="setPlateResult('홈런')"
+                        >
+                            홈런
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="setPlateResult('땅볼')"
+                        >
+                            땅볼
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="setPlateResult('뜬공')"
+                        >
+                            뜬공
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="setPlateResult('라인드라이브')"
+                        >
+                            라인드라이브
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="setPlateResult('희생플라이')"
+                        >
+                            희생플라이
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="setPlateResult('번트')"
+                        >
+                            번트
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="setPlateResult('실책')"
+                        >
+                            실책
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="setPlateResult('야수선택')"
+                        >
+                            야수선택
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="setPlateResult('데드볼')"
+                        >
+                            데드볼
+                        </button>
+                    </div>
+
+
+                    <div class="form-grid result-inputs">
+                        <label>
+                            득점
+
+                            <input
+                                id="runScored"
+                                type="number"
+                                min="0"
+                                value="0"
+                            >
+                        </label>
+
+                        <label>
+                            타점
+
+                            <input
+                                id="rbi"
+                                type="number"
+                                min="0"
+                                value="0"
+                            >
+                        </label>
+
+                        <label>
+                            메모
+
+                            <input
+                                id="playNote"
+                                placeholder="수비 위치, 작전 등"
+                            >
+                        </label>
+                    </div>
+
+
+                    <div
+                        id="selectedResult"
+                        class="selected-result"
+                    >
+                        선택 결과: 없음
+                    </div>
+
+                    <button
+                        class="save-main"
+                        type="button"
+                        onclick="savePlateAppearance()"
+                    >
+                        타석 저장
+                    </button>
+                </div>
+            </section>
+                        <section
+                id="lineupSection"
+                class="panel hidden"
+            >
+                <div class="panel-head">
+                    <div>
+                        <div class="section-kicker">
+                            STARTING LINEUP
+                        </div>
+
+                        <h2>양 팀 라인업 설정</h2>
+                    </div>
+
+                    <div class="head-buttons">
+                        <button
+                            type="button"
+                            onclick="clearLineups()"
+                        >
+                            라인업 초기화
+                        </button>
+
+                        <button
+                            class="primary"
+                            type="button"
+                            onclick="saveLineups()"
+                        >
+                            라인업 저장
+                        </button>
+                    </div>
+                </div>
+
+                <div class="lineup-grid">
+                    <div class="lineup-card home-lineup">
+                        <h3 id="homeLineupTitle">
+                            HOME
+                        </h3>
+
+                        <div id="homeLineupRows"></div>
+                    </div>
+
+                    <div class="lineup-card away-lineup">
+                        <h3 id="awayLineupTitle">
+                            AWAY
+                        </h3>
+
+                        <div id="awayLineupRows"></div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section
+                id="recordSection"
+                class="analysis-grid"
+            >
+                <div class="panel record-panel">
+                    <div class="panel-head">
+                        <div>
+                            <div class="section-kicker">
+                                PLAY BY PLAY
                             </div>
-                        `;
-                    })
-                    .join("");
-        }
 
-        function resetGame() {
-            const confirmed =
-                confirm(
-                    "경기 점수와 기록을 모두 초기화할까용?"
-                );
+                            <h2>최근 타석 기록</h2>
+                        </div>
 
-            if (!confirmed) {
-                return;
-            }
+                        <button
+                            type="button"
+                            onclick="undoLastPlateAppearance()"
+                        >
+                            최근 기록 취소
+                        </button>
+                    </div>
 
-            state.currentInning = 1;
-            state.isTopInning = true;
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>회차</th>
+                                    <th>투수</th>
+                                    <th>타자</th>
+                                    <th>결과</th>
+                                    <th>득점</th>
+                                    <th>스코어</th>
+                                </tr>
+                            </thead>
 
-            state.ballCount = 0;
-            state.strikeCount = 0;
-            state.outCount = 0;
+                            <tbody id="recordTableBody">
+                                <tr>
+                                    <td colspan="6">
+                                        아직 기록이 없습니다.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-            state.homeScore = 0;
-            state.awayScore = 0;
 
-            state.baseState = {
-                first: false,
-                second: false,
-                third: false
-            };
+                <div class="panel">
+                    <div class="section-kicker">
+                        BATTER ANALYSIS
+                    </div>
 
-            state.currentPitchSequence = [];
-            state.selectedResult = "";
+                    <h2>타자 주요 분석</h2>
 
-            state.isTeeMode = false;
-            state.teeReason = "";
+                    <div
+                        id="batterStats"
+                        class="stats-cards"
+                    >
+                        타석을 저장하면 표시됩니다.
+                    </div>
+                </div>
 
-            state.battingOrderIndex = {
-                home: 0,
-                away: 0
-            };
 
-            state.records = [];
+                <div class="panel">
+                    <div class="section-kicker">
+                        PITCHER ANALYSIS
+                    </div>
 
-            resetCurrentPlate();
-            updateScreen();
-            saveState();
-        }
+                    <h2>투수 주요 분석</h2>
 
-        function saveState() {
-            const saved = {
-                ...state,
+                    <div
+                        id="pitcherStats"
+                        class="stats-cards"
+                    >
+                        타석을 저장하면 표시됩니다.
+                    </div>
+                </div>
+            </section>
 
-                homeTeamName:
-                    getElement(
-                        "homeTeamName"
-                    ).value,
 
-                awayTeamName:
-                    getElement(
-                        "awayTeamName"
-                    ).value
-            };
+            <section
+                id="dashboardSection"
+                class="dashboard-grid"
+            >
+                <div class="panel wide-card">
+                    <div class="section-kicker">
+                        INNING FLOW
+                    </div>
 
-            try {
-                localStorage.setItem(
-                    STORAGE_KEY,
-                    JSON.stringify(saved)
-                );
-            } catch (error) {
-                console.warn(
-                    "저장 실패",
-                    error
-                );
-            }
-        }
+                    <h2>이닝별 득점 흐름</h2>
 
-        function loadState() {
-            try {
-                const raw =
-                    localStorage.getItem(
-                        STORAGE_KEY
-                    );
+                    <div class="chart-box">
+                        <canvas id="inningScoreChart"></canvas>
+                    </div>
+                </div>
 
-                if (!raw) {
-                    return;
-                }
 
-                const saved =
-                    JSON.parse(raw);
+                <div class="panel">
+                    <div class="section-kicker">
+                        RESULT SHARE
+                    </div>
 
-                state.currentInning =
-                    Number(
-                        saved.currentInning
-                    ) || 1;
+                    <h2>타석 결과 분포</h2>
 
-                state.isTopInning =
-                    saved.isTopInning !== false;
+                    <div class="chart-box">
+                        <canvas id="resultChart"></canvas>
+                    </div>
+                </div>
 
-                state.ballCount =
-                    Number(
-                        saved.ballCount
-                    ) || 0;
 
-                state.strikeCount =
-                    Number(
-                        saved.strikeCount
-                    ) || 0;
+                <div class="panel">
+                    <div class="section-kicker">
+                        TODAY'S MVP
+                    </div>
 
-                state.outCount =
-                    Number(
-                        saved.outCount
-                    ) || 0;
+                    <h2>오늘의 MVP</h2>
 
-                state.homeScore =
-                    Number(
-                        saved.homeScore
-                    ) || 0;
+                    <div id="mvpCard">
+                        경기 기록이 없습니다.
+                    </div>
+                </div>
 
-                state.awayScore =
-                    Number(
-                        saved.awayScore
-                    ) || 0;
 
-                state.baseState = {
-                    first:
-                        Boolean(
-                            saved.baseState?.first
-                        ),
+                <div
+                    id="teamSection"
+                    class="panel"
+                >
+                    <div class="section-kicker">
+                        TEAM COMPARISON
+                    </div>
 
-                    second:
-                        Boolean(
-                            saved.baseState?.second
-                        ),
+                    <h2>팀 비교 요약</h2>
 
-                    third:
-                        Boolean(
-                            saved.baseState?.third
-                        )
-                };
+                    <div id="teamCompare"></div>
+                </div>
+            </section>
 
-                state.currentPitchSequence =
-                    Array.isArray(
-                        saved.currentPitchSequence
-                    )
-                        ? saved.currentPitchSequence
-                        : [];
 
-                state.selectedResult =
-                    saved.selectedResult || "";
+            <section
+                id="chartsSection"
+                class="dashboard-grid chart-analysis-grid"
+            >
+                <div class="panel wide-card">
+                    <div class="section-kicker">
+                        SPRAY CHART
+                    </div>
 
-                state.isTeeMode =
-                    Boolean(
-                        saved.isTeeMode
-                    );
+                    <h2>타구 방향 차트</h2>
 
-                state.teeReason =
-                    saved.teeReason || "";
+                    <p class="description">
+                        야구장 안을 눌러 타구 위치를 기록해줘용.
+                    </p>
 
-                state.lineups = {
-                    home:
-                        Array.isArray(
-                            saved.lineups?.home
-                        )
-                            ? saved.lineups.home
-                            : [],
+                    <div
+                        id="sprayChart"
+                        class="spray-chart"
+                        onclick="recordSpray(event)"
+                    >
+                        <div class="field-label left-field">
+                            좌익
+                        </div>
 
-                    away:
-                        Array.isArray(
-                            saved.lineups?.away
-                        )
-                            ? saved.lineups.away
-                            : []
-                };
+                        <div class="field-label center-field">
+                            중견
+                        </div>
 
-                state.battingOrderIndex = {
-                    home:
-                        Number(
-                            saved
-                                .battingOrderIndex
-                                ?.home
-                        ) || 0,
+                        <div class="field-label right-field">
+                            우익
+                        </div>
 
-                    away:
-                        Number(
-                            saved
-                                .battingOrderIndex
-                                ?.away
-                        ) || 0
-                };
+                        <div class="field-label third-base">
+                            3루
+                        </div>
 
-                state.records =
-                    Array.isArray(
-                        saved.records
-                    )
-                        ? saved.records
-                        : [];
+                        <div class="field-label shortstop">
+                            유격
+                        </div>
 
-                if (saved.homeTeamName) {
-                    getElement(
-                        "homeTeamName"
-                    ).value =
-                        saved.homeTeamName;
-                }
+                        <div class="field-label second-base">
+                            2루
+                        </div>
 
-                if (saved.awayTeamName) {
-                    getElement(
-                        "awayTeamName"
-                    ).value =
-                        saved.awayTeamName;
-                }
-            } catch (error) {
-                console.warn(
-                    "불러오기 실패",
-                    error
-                );
-            }
-        }
+                        <div class="field-label first-base">
+                            1루
+                        </div>
 
-        function escapeHtml(value) {
-            return String(value ?? "")
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")
-                .replaceAll("'", "&#039;");
-        }
+                        <div class="home-marker">
+                            HOME
+                        </div>
+                    </div>
 
-        getElement(
-            "homeTeamName"
-        ).addEventListener(
-            "input",
-            function () {
-                updateScreen();
-                saveState();
-            }
-        );
+                    <button
+                        class="clear-chart-button"
+                        type="button"
+                        onclick="clearSprayChart()"
+                    >
+                        타구 차트 초기화
+                    </button>
+                </div>
 
-        getElement(
-            "awayTeamName"
-        ).addEventListener(
-            "input",
-            function () {
-                updateScreen();
-                saveState();
-            }
-        );
 
-        loadState();
-        renderLineupInputs();
-        updateScreen();
-    </script>
+                <div class="panel">
+                    <div class="section-kicker">
+                        STRIKE ZONE
+                    </div>
+
+                    <h2>스트라이크존 분포</h2>
+
+                    <p class="description">
+                        존을 눌러 투구 위치를 기록해줘용.
+                    </p>
+
+                    <div
+                        id="strikeZone"
+                        class="strike-zone"
+                        onclick="recordZone(event)"
+                    >
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <button
+                        class="clear-chart-button"
+                        type="button"
+                        onclick="clearStrikeZone()"
+                    >
+                        스트라이크존 초기화
+                    </button>
+                </div>
+
+
+                <div class="panel">
+                    <div class="section-kicker">
+                        GAME HIGHLIGHT
+                    </div>
+
+                    <h2>오늘의 하이라이트</h2>
+
+                    <div
+                        id="highlightList"
+                        class="highlight-list"
+                    >
+                        기록을 저장하면 주요 장면이 표시됩니다.
+                    </div>
+                </div>
+            </section>
+
+
+            <section
+                id="reportSection"
+                class="panel report-section"
+            >
+                <div class="panel-head">
+                    <div>
+                        <div class="section-kicker">
+                            SCOUTING REPORT
+                        </div>
+
+                        <h2>자동 전력분석 리포트</h2>
+                    </div>
+
+                    <button
+                        class="primary"
+                        type="button"
+                        onclick="generateReport()"
+                    >
+                        리포트 생성
+                    </button>
+                </div>
+
+                <div
+                    id="reportOutput"
+                    class="report-output"
+                >
+                    경기 기록을 저장한 뒤 리포트를 생성해줘용.
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="app.js"></script>
 </body>
 </html>
