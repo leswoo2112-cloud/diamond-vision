@@ -1,10 +1,11 @@
 "use strict";
 
 /* =========================================================
-   Diamond Vision 3.0
+   DIAMOND VISION
+   경기 기록 + 전력분석 + 인쇄 리포트
 ========================================================= */
 
-const STORAGE_KEY = "diamondVisionV3";
+const STORAGE_KEY = "diamondVisionV4";
 
 const $ = id =>
     document.getElementById(id);
@@ -31,7 +32,6 @@ let baseState = {
 };
 
 let currentPitchSequence = [];
-
 let selectedPlateResult = "";
 
 let isTeeMode = false;
@@ -70,16 +70,19 @@ window.youtubePlayer = null;
 
 
 /* =========================================================
-   기본 화면
+   날짜·팀
 ========================================================= */
 
 function setTodayDate() {
     const element =
         $("todayDate");
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
 
-    const today = new Date();
+    const today =
+        new Date();
 
     const year =
         today.getFullYear();
@@ -248,10 +251,12 @@ function updateBaseDisplay() {
 
 function toggleBase(baseName) {
     if (
-        !Object.prototype.hasOwnProperty.call(
-            baseState,
-            baseName
-        )
+        !Object.prototype
+            .hasOwnProperty
+            .call(
+                baseState,
+                baseName
+            )
     ) {
         return;
     }
@@ -273,8 +278,29 @@ function countBaseRunners() {
 }
 
 
+function getBaseText() {
+    const bases = [];
+
+    if (baseState.first) {
+        bases.push("1루");
+    }
+
+    if (baseState.second) {
+        bases.push("2루");
+    }
+
+    if (baseState.third) {
+        bases.push("3루");
+    }
+
+    return bases.length
+        ? bases.join(", ")
+        : "주자 없음";
+}
+
+
 /* =========================================================
-   라인업
+   라인업 생성
 ========================================================= */
 
 function renderLineupRows() {
@@ -287,7 +313,9 @@ function renderLineupRows() {
         const container =
             $(`${teamKey}LineupRows`);
 
-        if (!container) continue;
+        if (!container) {
+            continue;
+        }
 
         container.innerHTML = "";
 
@@ -333,7 +361,9 @@ function renderLineupRows() {
                 </select>
             `;
 
-            container.appendChild(row);
+            container.appendChild(
+                row
+            );
         }
     }
 }
@@ -346,7 +376,9 @@ function toggleLineupPanel() {
 }
 
 
-function readLineupFromInputs(teamKey) {
+function readLineupFromInputs(
+    teamKey
+) {
     const players = [];
 
     for (
@@ -374,20 +406,26 @@ function readLineupFromInputs(teamKey) {
 
 function saveLineups() {
     lineups.home =
-        readLineupFromInputs("home");
-
-    lineups.away =
-        readLineupFromInputs("away");
-
-    const hasPlayers =
-        lineups.home.some(
-            player => player.name
-        ) ||
-        lineups.away.some(
-            player => player.name
+        readLineupFromInputs(
+            "home"
         );
 
-    if (!hasPlayers) {
+    lineups.away =
+        readLineupFromInputs(
+            "away"
+        );
+
+    const hasPlayer =
+        lineups.home.some(
+            player =>
+                player.name
+        ) ||
+        lineups.away.some(
+            player =>
+                player.name
+        );
+
+    if (!hasPlayer) {
         alert(
             "선수 이름을 한 명 이상 입력해줘용."
         );
@@ -396,7 +434,6 @@ function saveLineups() {
     }
 
     clampBattingOrderIndexes();
-
     updateTeamTitles();
     updateCurrentLineupDisplay();
     saveGameState();
@@ -408,12 +445,13 @@ function saveLineups() {
 
 
 function clearLineups() {
-    const confirmed =
-        confirm(
+    if (
+        !confirm(
             "양 팀 라인업을 초기화할까용?"
-        );
-
-    if (!confirmed) return;
+        )
+    ) {
+        return;
+    }
 
     for (
         const teamKey of [
@@ -457,7 +495,9 @@ function clearLineups() {
 }
 
 
-function getValidLineupPlayers(teamKey) {
+function getValidLineupPlayers(
+    teamKey
+) {
     return (
         lineups[teamKey] || []
     ).filter(
@@ -480,28 +520,27 @@ function clampBattingOrderIndexes() {
                 teamKey
             );
 
-        if (players.length === 0) {
-            battingOrderIndex[teamKey] = 0;
-            continue;
-        }
-
         if (
+            players.length === 0 ||
             battingOrderIndex[teamKey] >=
-            players.length
+                players.length
         ) {
-            battingOrderIndex[teamKey] = 0;
+            battingOrderIndex[teamKey] =
+                0;
         }
     }
 }
 
 
-function getCurrentBatter(teamKey) {
+function getCurrentBatter(
+    teamKey
+) {
     const players =
         getValidLineupPlayers(
             teamKey
         );
 
-    if (players.length === 0) {
+    if (!players.length) {
         return null;
     }
 
@@ -512,13 +551,15 @@ function getCurrentBatter(teamKey) {
 }
 
 
-function getNextBatter(teamKey) {
+function getNextBatter(
+    teamKey
+) {
     const players =
         getValidLineupPlayers(
             teamKey
         );
 
-    if (players.length === 0) {
+    if (!players.length) {
         return null;
     }
 
@@ -531,13 +572,15 @@ function getNextBatter(teamKey) {
 }
 
 
-function advanceBattingOrder(teamKey) {
+function advanceBattingOrder(
+    teamKey
+) {
     const players =
         getValidLineupPlayers(
             teamKey
         );
 
-    if (players.length === 0) {
+    if (!players.length) {
         return;
     }
 
@@ -607,7 +650,9 @@ function updateCurrentLineupDisplay() {
         document.querySelector(
             `.lineup-player-input[data-team="${offenseKey}"][data-order="${currentBatter.order}"]`
         )
-            ?.closest(".lineup-row")
+            ?.closest(
+                ".lineup-row"
+            )
             ?.classList.add(
                 "current-batter-row"
             );
@@ -629,10 +674,13 @@ function writeLineupsToInputs() {
         ) {
             const player =
                 (
-                    lineups[teamKey] || []
+                    lineups[teamKey] ||
+                    []
                 ).find(
                     item =>
-                        Number(item.order) ===
+                        Number(
+                            item.order
+                        ) ===
                         order
                 );
 
@@ -657,7 +705,7 @@ function writeLineupsToInputs() {
 
 
 /* =========================================================
-   투구 및 티바 규칙
+   투구·티바 규칙
 ========================================================= */
 
 function enterTeeMode(reason) {
@@ -674,9 +722,9 @@ function enterTeeMode(reason) {
 function addPitch(type) {
     if (
         selectedPlateResult ===
-            "티바 파울 아웃" ||
+            "삼진" ||
         selectedPlateResult ===
-            "삼진"
+            "티바 파울 아웃"
     ) {
         alert(
             "타석 결과가 확정됐어용. 타석 저장을 눌러줘용."
@@ -686,14 +734,14 @@ function addPitch(type) {
     }
 
     /*
-        티바 상태:
-        파울만 추가 입력 가능
+        티바에서는 파울만
+        스트라이크로 추가
     */
 
     if (isTeeMode) {
         if (type !== "F") {
             alert(
-                "현재 티바 타격 중이에용. 파울이나 타격 결과를 입력해줘용."
+                "티바 타격 중에는 파울 또는 타격 결과를 입력해줘용."
             );
 
             return;
@@ -715,7 +763,6 @@ function addPitch(type) {
         updatePitchSequence();
         updateCountDisplay();
         updateSelectedResult();
-        updateTeeButtons();
         saveGameState();
 
         return;
@@ -749,11 +796,6 @@ function addPitch(type) {
         }
     }
 
-    /*
-        일반 야구 파울:
-        2스트라이크 전까지만 증가
-    */
-
     if (
         type === "F" &&
         strikeCount < 2
@@ -773,7 +815,9 @@ function updatePitchSequence() {
     const element =
         $("pitchSequence");
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
 
     if (
         currentPitchSequence.length ===
@@ -806,14 +850,14 @@ function updatePitchSequence() {
                     className = "swing";
                 }
 
-                const displayName =
+                const label =
                     pitch === "TF"
                         ? "티바 파울"
                         : pitch;
 
                 return `
                     <span class="pitch-chip ${className}">
-                        ${displayName}
+                        ${label}
                     </span>
                 `;
             })
@@ -823,8 +867,8 @@ function updatePitchSequence() {
 
 function setPlateResult(result) {
     /*
-        데드볼 → 출루가 아닌 티바 전환
-        기존 스트라이크 유지
+        데드볼은 자동 출루가 아니라
+        현재 스트라이크를 유지하고 티바
     */
 
     if (result === "데드볼") {
@@ -842,7 +886,7 @@ function setPlateResult(result) {
         "티바 파울 아웃"
     ) {
         alert(
-            "티바 파울 아웃이 확정됐어용."
+            "이미 티바 파울 아웃이 확정됐어용."
         );
 
         return;
@@ -874,7 +918,9 @@ function updateSelectedResult() {
     const element =
         $("selectedResult");
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
 
     if (
         isTeeMode &&
@@ -900,14 +946,15 @@ function updateTeeButtons() {
             ".result-buttons button"
         )
         .forEach(button => {
-            const buttonText =
-                button.textContent.trim();
+            const text =
+                button.textContent
+                    .trim();
 
             const blocked =
                 isTeeMode &&
                 (
-                    buttonText === "홈런" ||
-                    buttonText === "데드볼"
+                    text === "홈런" ||
+                    text === "데드볼"
                 );
 
             button.disabled =
@@ -918,16 +965,73 @@ function updateTeeButtons() {
 
 function normalizeResult(result) {
     return String(result || "")
-        .replace(/^티바\s*/, "")
+        .replace(
+            /^티바\s*/,
+            ""
+        )
         .trim();
 }
 
 
 /* =========================================================
-   타석 결과와 득점
+   득점 입력
 ========================================================= */
 
-function createSnapshot() {
+function getRunInputElement() {
+    return (
+        $("runScored") ||
+        $("runsScored") ||
+        $("runs") ||
+        $("scoreRuns") ||
+        document.querySelector(
+            'input[name="runScored"]'
+        ) ||
+        document.querySelector(
+            'input[name="runs"]'
+        )
+    );
+}
+
+
+function getEnteredRuns() {
+    const input =
+        getRunInputElement();
+
+    if (!input) {
+        return 0;
+    }
+
+    const numberValue =
+        input.valueAsNumber;
+
+    if (
+        Number.isFinite(
+            numberValue
+        )
+    ) {
+        return Math.max(
+            0,
+            Math.floor(
+                numberValue
+            )
+        );
+    }
+
+    return Math.max(
+        0,
+        parseInt(
+            input.value,
+            10
+        ) || 0
+    );
+}
+
+
+/* =========================================================
+   타석 저장
+========================================================= */
+
+function createGameSnapshot() {
     return {
         currentInning,
         isTopInning,
@@ -989,33 +1093,29 @@ function savePlateAppearance() {
 
     if (!selectedPlateResult) {
         alert(
-            "타석 결과를 선택해줘용."
+            isTeeMode
+                ? "티바 타격 결과를 선택해줘용."
+                : "타석 결과를 선택해줘용."
         );
 
         return;
     }
 
-    const normalizedResult =
+    const result =
         normalizeResult(
             selectedPlateResult
         );
 
     let runs =
-        Math.max(
-            0,
-            Number(
-                $("runScored")
-                    ?.value
-            ) || 0
-        );
+        getEnteredRuns();
 
     /*
-        홈런만 자동 득점
-        주자 + 타자
+        홈런은 입력값 대신
+        현재 주자 + 타자 자동 득점
     */
 
     if (
-        normalizedResult === "홈런" &&
+        result === "홈런" &&
         !isTeeMode
     ) {
         runs =
@@ -1034,11 +1134,25 @@ function savePlateAppearance() {
     const offenseKey =
         getCurrentOffenseKey();
 
+    const lineupBatter =
+        getCurrentBatter(
+            offenseKey
+        );
+
     const snapshot =
-        createSnapshot();
+        createGameSnapshot();
 
     const inningText =
         `${currentInning}회${isTopInning ? "초" : "말"}`;
+
+    const baseBefore =
+        getBaseText();
+
+    const outsBefore =
+        outCount;
+
+    const scoreBefore =
+        `${awayScore} : ${homeScore}`;
 
     const teeModeAtSave =
         isTeeMode;
@@ -1075,6 +1189,14 @@ function savePlateAppearance() {
                 offenseKey
             ),
 
+        battingOrder:
+            lineupBatter?.order ||
+            null,
+
+        position:
+            lineupBatter?.position ||
+            "",
+
         pitcher,
         batter,
 
@@ -1089,22 +1211,37 @@ function savePlateAppearance() {
         result:
             selectedPlateResult,
 
+        teeMode:
+            teeModeAtSave,
+
+        teeReason:
+            teeReasonAtSave,
+
+        baseBefore,
+
+        baseAfter:
+            getBaseText(),
+
+        outsBefore,
+
+        outsAfter:
+            outCount,
+
         runs,
         rbi,
+
+        scoreBefore,
+
+        scoreAfter:
+            `${awayScore} : ${homeScore}`,
 
         note:
             $("playNote")
                 ?.value
                 .trim() || "",
 
-        scoreAfter:
-            `${awayScore} : ${homeScore}`,
-
-        teeMode:
-            teeModeAtSave,
-
-        teeReason:
-            teeReasonAtSave
+        videoTime:
+            getCurrentVideoTime()
     });
 
     advanceBattingOrder(
@@ -1118,13 +1255,17 @@ function savePlateAppearance() {
 
     if (reachedThreeOuts) {
         finishHalfInning();
+    } else {
+        updateCurrentLineupDisplay();
     }
 
     rebuildStatistics();
     drawAllResults();
     saveGameState();
 }
-
+/* =========================================================
+   타석 결과 적용
+========================================================= */
 
 function applyPlateResult(
     result,
@@ -1177,10 +1318,8 @@ function applyPlateResult(
     }
 
     if (
-        [
-            "실책",
-            "야수선택"
-        ].includes(normalized)
+        normalized === "실책" ||
+        normalized === "야수선택"
     ) {
         baseState.first = true;
     }
@@ -1194,10 +1333,14 @@ function applyPlateResult(
     addRuns(runs);
 
     updateCountDisplay();
-    updateBaseDisplay();
     updateScoreDisplay();
+    updateBaseDisplay();
 }
 
+
+/* =========================================================
+   주자 이동
+========================================================= */
 
 function advanceRunners(baseAmount) {
     const oldBases = {
@@ -1226,25 +1369,38 @@ function advanceRunners(baseAmount) {
         }
     }
 
+    /*
+        3루타는 모든 기존 주자가 홈에 들어온 것으로 보고
+        타자만 3루에 표시
+    */
+
+    if (baseAmount === 3) {
+        newBases.third = true;
+    }
+
     baseState =
         newBases;
 }
 
 
+/* =========================================================
+   점수 반영
+========================================================= */
+
 function addRuns(runs) {
     const value =
-        Number(runs);
+        Math.max(
+            0,
+            Number(runs) || 0
+        );
 
-    if (
-        !Number.isFinite(value) ||
-        value <= 0
-    ) {
+    if (value <= 0) {
         return;
     }
 
     /*
-        초 = AWAY
-        말 = HOME
+        초 공격 = AWAY
+        말 공격 = HOME
     */
 
     if (isTopInning) {
@@ -1276,7 +1432,7 @@ function addRuns(runs) {
 
 
 /* =========================================================
-   타석·반이닝 초기화
+   이닝·타석 초기화
 ========================================================= */
 
 function finishHalfInning() {
@@ -1305,6 +1461,7 @@ function finishHalfInning() {
 
     updateInningDisplay();
     updateCountDisplay();
+    updateScoreDisplay();
     updateBaseDisplay();
     updatePitchSequence();
     updateSelectedResult();
@@ -1348,8 +1505,11 @@ function resetCurrentPlateAppearance() {
     isTeeMode = false;
     teeReason = "";
 
-    if ($("runScored")) {
-        $("runScored").value = "0";
+    const runInput =
+        getRunInputElement();
+
+    if (runInput) {
+        runInput.value = "0";
     }
 
     if ($("rbi")) {
@@ -1364,12 +1524,11 @@ function resetCurrentPlateAppearance() {
     updatePitchSequence();
     updateSelectedResult();
     updateTeeButtons();
-    updateCurrentLineupDisplay();
 }
 
 
 /* =========================================================
-   최근 기록 취소
+   최근 타석 취소
 ========================================================= */
 
 function undoLastPlateAppearance() {
@@ -1396,8 +1555,7 @@ function undoLastPlateAppearance() {
             ) || 1;
 
         isTopInning =
-            snapshot.isTopInning !==
-            false;
+            snapshot.isTopInning !== false;
 
         ballCount =
             Number(
@@ -1490,31 +1648,35 @@ function undoLastPlateAppearance() {
     updateCountDisplay();
     updateScoreDisplay();
     updateBaseDisplay();
+    updateCurrentLineupDisplay();
 
     saveGameState();
+
+    alert(
+        "최근 타석 기록을 취소했어용."
+    );
 }
 
 
 /* =========================================================
-   통계 계산
+   타자·투수 통계 계산
 ========================================================= */
 
 function rebuildStatistics() {
     batterStats = {};
     pitcherStats = {};
 
-    for (
-        const record of
-        plateAppearances
-    ) {
-        updateBatterStatistic(
-            record
-        );
+    plateAppearances.forEach(
+        record => {
+            updateBatterStatistic(
+                record
+            );
 
-        updatePitcherStatistic(
-            record
-        );
-    }
+            updatePitcherStatistic(
+                record
+            );
+        }
+    );
 }
 
 
@@ -1522,10 +1684,14 @@ function updateBatterStatistic(record) {
     const name =
         record.batter;
 
+    if (!name) {
+        return;
+    }
+
     if (!batterStats[name]) {
         batterStats[name] = {
             team:
-                record.teamName,
+                record.teamName || "",
 
             pa: 0,
             ab: 0,
@@ -1538,6 +1704,7 @@ function updateBatterStatistic(record) {
 
             runs: 0,
             rbi: 0,
+
             strikeouts: 0,
 
             teeAppearances: 0
@@ -1593,10 +1760,8 @@ function updateBatterStatistic(record) {
     }
 
     if (
-        [
-            "삼진",
-            "티바 파울 아웃"
-        ].includes(result)
+        result === "삼진" ||
+        result === "티바 파울 아웃"
     ) {
         stats.strikeouts += 1;
     }
@@ -1606,6 +1771,10 @@ function updateBatterStatistic(record) {
 function updatePitcherStatistic(record) {
     const name =
         record.pitcher;
+
+    if (!name) {
+        return;
+    }
 
     if (!pitcherStats[name]) {
         pitcherStats[name] = {
@@ -1619,7 +1788,6 @@ function updatePitcherStatistic(record) {
             runsAllowed: 0,
 
             strikeouts: 0,
-
             teeBatters: 0
         };
     }
@@ -1669,10 +1837,8 @@ function updatePitcherStatistic(record) {
     }
 
     if (
-        [
-            "삼진",
-            "티바 파울 아웃"
-        ].includes(result)
+        result === "삼진" ||
+        result === "티바 파울 아웃"
     ) {
         stats.strikeouts += 1;
     }
@@ -1687,7 +1853,48 @@ function updatePitcherStatistic(record) {
 
 
 /* =========================================================
-   기록표·분석 화면
+   타자 지표
+========================================================= */
+
+function calculateBatterMetrics(stats) {
+    const average =
+        stats.ab > 0
+            ? stats.hits /
+                stats.ab
+            : 0;
+
+    const totalBases =
+        stats.singles +
+        stats.doubles * 2 +
+        stats.triples * 3 +
+        stats.homeRuns * 4;
+
+    const slugging =
+        stats.ab > 0
+            ? totalBases /
+                stats.ab
+            : 0;
+
+    const onBase =
+        stats.pa > 0
+            ? stats.hits /
+                stats.pa
+            : 0;
+
+    return {
+        average,
+        onBase,
+        slugging,
+
+        ops:
+            onBase +
+            slugging
+    };
+}
+
+
+/* =========================================================
+   분석 화면 전체 출력
 ========================================================= */
 
 function drawAllResults() {
@@ -1698,18 +1905,24 @@ function drawAllResults() {
     drawMVP();
     drawTeamCompare();
     drawHighlights();
+    updateReportPlayerSelect();
 }
 
+
+/* =========================================================
+   최근 타석 표
+========================================================= */
 
 function drawRecordTable() {
     const body =
         $("recordTableBody");
 
-    if (!body) return;
+    if (!body) {
+        return;
+    }
 
     if (
-        plateAppearances.length ===
-        0
+        plateAppearances.length === 0
     ) {
         body.innerHTML = `
             <tr>
@@ -1758,60 +1971,24 @@ function drawRecordTable() {
 }
 
 
-function calculateBatterMetrics(stats) {
-    const average =
-        stats.ab > 0
-            ? stats.hits /
-                stats.ab
-            : 0;
-
-    const totalBases =
-        stats.singles +
-        stats.doubles * 2 +
-        stats.triples * 3 +
-        stats.homeRuns * 4;
-
-    const slugging =
-        stats.ab > 0
-            ? totalBases /
-                stats.ab
-            : 0;
-
-    /*
-        볼넷·데드볼이 티바로 이어지므로
-        출루율은 현재 데이터에서
-        안타 기반으로 계산
-    */
-
-    const onBase =
-        stats.ab > 0
-            ? stats.hits /
-                stats.ab
-            : 0;
-
-    return {
-        average,
-        onBase,
-        slugging,
-        ops:
-            onBase +
-            slugging
-    };
-}
-
+/* =========================================================
+   타자 분석 출력
+========================================================= */
 
 function drawBatterStats() {
     const element =
         $("batterStats");
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
 
     const entries =
         Object.entries(
             batterStats
         );
 
-    if (entries.length === 0) {
+    if (!entries.length) {
         element.innerHTML =
             "타석을 저장하면 표시됩니다.";
 
@@ -1832,6 +2009,10 @@ function drawBatterStats() {
                             <h3>
                                 ${escapeHtml(name)}
                             </h3>
+
+                            <p>
+                                ${escapeHtml(stats.team)}
+                            </p>
 
                             <div class="mini-grid">
                                 <div>
@@ -1890,18 +2071,24 @@ function drawBatterStats() {
 }
 
 
+/* =========================================================
+   투수 분석 출력
+========================================================= */
+
 function drawPitcherStats() {
     const element =
         $("pitcherStats");
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
 
     const entries =
         Object.entries(
             pitcherStats
         );
 
-    if (entries.length === 0) {
+    if (!entries.length) {
         element.innerHTML =
             "타석을 저장하면 표시됩니다.";
 
@@ -1928,7 +2115,7 @@ function drawPitcherStats() {
 
                             <div class="mini-grid">
                                 <div>
-                                    <span>투구 수</span>
+                                    <span>투구수</span>
                                     <b>${stats.pitches}</b>
                                 </div>
 
@@ -1945,17 +2132,17 @@ function drawPitcherStats() {
                                 </div>
 
                                 <div>
-                                    <span>실점</span>
-                                    <b>${stats.runsAllowed}</b>
-                                </div>
-
-                                <div>
                                     <span>피안타</span>
                                     <b>${stats.hitsAllowed}</b>
                                 </div>
 
                                 <div>
-                                    <span>타자 수</span>
+                                    <span>실점</span>
+                                    <b>${stats.runsAllowed}</b>
+                                </div>
+
+                                <div>
+                                    <span>상대 타자</span>
                                     <b>${stats.battersFaced}</b>
                                 </div>
 
@@ -1965,7 +2152,7 @@ function drawPitcherStats() {
                                 </div>
 
                                 <div>
-                                    <span>티바</span>
+                                    <span>티바 전환</span>
                                     <b>${stats.teeBatters}</b>
                                 </div>
                             </div>
@@ -1978,7 +2165,7 @@ function drawPitcherStats() {
 
 
 /* =========================================================
-   차트
+   그래프
 ========================================================= */
 
 function drawCharts() {
@@ -1998,7 +2185,9 @@ function drawInningScoreChart() {
     const canvas =
         $("inningScoreChart");
 
-    if (!canvas) return;
+    if (!canvas) {
+        return;
+    }
 
     const maxInning =
         Math.max(
@@ -2021,6 +2210,7 @@ function drawInningScoreChart() {
                 length:
                     maxInning
             },
+
             (_, index) =>
                 `${index + 1}회`
         );
@@ -2049,11 +2239,13 @@ function drawInningScoreChart() {
                                         _,
                                         index
                                     ) =>
-                                        inningScores
-                                            .home[
-                                            index +
-                                            1
-                                        ] || 0
+                                        Number(
+                                            inningScores
+                                                .home[
+                                                index +
+                                                1
+                                            ]
+                                        ) || 0
                                 ),
 
                             borderColor:
@@ -2076,11 +2268,13 @@ function drawInningScoreChart() {
                                         _,
                                         index
                                     ) =>
-                                        inningScores
-                                            .away[
-                                            index +
-                                            1
-                                        ] || 0
+                                        Number(
+                                            inningScores
+                                                .away[
+                                                index +
+                                                1
+                                            ]
+                                        ) || 0
                                 ),
 
                             borderColor:
@@ -2116,11 +2310,6 @@ function drawInningScoreChart() {
                             ticks: {
                                 color:
                                     "#8695a9"
-                            },
-
-                            grid: {
-                                color:
-                                    "rgba(134,149,169,0.1)"
                             }
                         },
 
@@ -2134,11 +2323,6 @@ function drawInningScoreChart() {
 
                                 precision:
                                     0
-                            },
-
-                            grid: {
-                                color:
-                                    "rgba(134,149,169,0.1)"
                             }
                         }
                     }
@@ -2152,19 +2336,21 @@ function drawResultChart() {
     const canvas =
         $("resultChart");
 
-    if (!canvas) return;
+    if (!canvas) {
+        return;
+    }
 
     const counts = {};
 
     plateAppearances.forEach(
         record => {
-            const key =
+            const result =
                 record.result ||
                 "기타";
 
-            counts[key] =
+            counts[result] =
                 (
-                    counts[key] ||
+                    counts[result] ||
                     0
                 ) + 1;
         }
@@ -2244,7 +2430,7 @@ function drawResultChart() {
 
 
 /* =========================================================
-   MVP·팀 비교·하이라이트
+   MVP
 ========================================================= */
 
 function getMvpPlayer() {
@@ -2253,7 +2439,7 @@ function getMvpPlayer() {
             batterStats
         );
 
-    if (entries.length === 0) {
+    if (!entries.length) {
         return null;
     }
 
@@ -2294,7 +2480,9 @@ function drawMVP() {
     const element =
         $("mvpCard");
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
 
     const player =
         getMvpPlayer();
@@ -2344,11 +2532,17 @@ function drawMVP() {
 }
 
 
+/* =========================================================
+   팀 비교
+========================================================= */
+
 function drawTeamCompare() {
     const element =
         $("teamCompare");
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
 
     const homeRecords =
         plateAppearances.filter(
@@ -2364,60 +2558,42 @@ function drawTeamCompare() {
                 "away"
         );
 
-    const homeHits =
-        homeRecords.filter(
-            record =>
-                [
-                    "안타",
-                    "2루타",
-                    "3루타",
-                    "홈런"
-                ].includes(
-                    normalizeResult(
-                        record.result
+    const countHits =
+        records =>
+            records.filter(
+                record =>
+                    [
+                        "안타",
+                        "2루타",
+                        "3루타",
+                        "홈런"
+                    ].includes(
+                        normalizeResult(
+                            record.result
+                        )
                     )
-                )
-        ).length;
-
-    const awayHits =
-        awayRecords.filter(
-            record =>
-                [
-                    "안타",
-                    "2루타",
-                    "3루타",
-                    "홈런"
-                ].includes(
-                    normalizeResult(
-                        record.result
-                    )
-                )
-        ).length;
+            ).length;
 
     element.innerHTML = `
         <div class="mini-grid">
             <div>
-                <span>
-                    ${escapeHtml(getHomeTeamName())} 득점
-                </span>
+                <span>HOME 득점</span>
                 <b>${homeScore}</b>
             </div>
 
             <div>
-                <span>
-                    ${escapeHtml(getAwayTeamName())} 득점
-                </span>
+                <span>AWAY 득점</span>
                 <b>${awayScore}</b>
             </div>
 
             <div>
                 <span>HOME 안타</span>
-                <b>${homeHits}</b>
+                <b>${countHits(homeRecords)}</b>
             </div>
 
             <div>
                 <span>AWAY 안타</span>
-                <b>${awayHits}</b>
+                <b>${countHits(awayRecords)}</b>
             </div>
 
             <div>
@@ -2434,11 +2610,17 @@ function drawTeamCompare() {
 }
 
 
+/* =========================================================
+   하이라이트
+========================================================= */
+
 function drawHighlights() {
     const element =
         $("highlightList");
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
 
     const highlights =
         plateAppearances.filter(
@@ -2457,7 +2639,7 @@ function drawHighlights() {
             }
         );
 
-    if (highlights.length === 0) {
+    if (!highlights.length) {
         element.innerHTML =
             "기록을 저장하면 주요 장면이 표시됩니다.";
 
@@ -2478,10 +2660,8 @@ function drawHighlights() {
 
                     <div>
                         ${escapeHtml(record.result)}
-                        ·
-                        득점 ${Number(record.runs) || 0}
-                        ·
-                        타점 ${Number(record.rbi) || 0}
+                        · 득점 ${Number(record.runs) || 0}
+                        · 타점 ${Number(record.rbi) || 0}
                     </div>
                 </div>
             `)
@@ -2490,7 +2670,7 @@ function drawHighlights() {
 
 
 /* =========================================================
-   타구 방향과 스트라이크존
+   타구 차트
 ========================================================= */
 
 function recordSpray(event) {
@@ -2500,53 +2680,21 @@ function recordSpray(event) {
     const rect =
         element.getBoundingClientRect();
 
-    const x =
-        (
-            event.clientX -
-            rect.left
-        ) / rect.width;
-
-    const y =
-        (
-            event.clientY -
-            rect.top
-        ) / rect.height;
-
     sprayPoints.push({
-        x,
-        y
+        x:
+            (
+                event.clientX -
+                rect.left
+            ) / rect.width,
+
+        y:
+            (
+                event.clientY -
+                rect.top
+            ) / rect.height
     });
 
     drawSprayPoints();
-    saveGameState();
-}
-
-
-function recordZone(event) {
-    const element =
-        event.currentTarget;
-
-    const rect =
-        element.getBoundingClientRect();
-
-    const x =
-        (
-            event.clientX -
-            rect.left
-        ) / rect.width;
-
-    const y =
-        (
-            event.clientY -
-            rect.top
-        ) / rect.height;
-
-    zonePoints.push({
-        x,
-        y
-    });
-
-    drawZonePoints();
     saveGameState();
 }
 
@@ -2555,7 +2703,9 @@ function drawSprayPoints() {
     const element =
         $("sprayChart");
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
 
     element
         .querySelectorAll(
@@ -2565,23 +2715,63 @@ function drawSprayPoints() {
             dot.remove();
         });
 
-    sprayPoints.forEach(point => {
-        const dot =
-            document.createElement(
-                "span"
-            );
+    sprayPoints.forEach(
+        point => {
+            const dot =
+                document.createElement(
+                    "span"
+                );
 
-        dot.className =
-            "spray-dot";
+            dot.className =
+                "spray-dot";
 
-        dot.style.left =
-            `calc(${point.x * 100}% - 5px)`;
+            dot.style.left =
+                `calc(${point.x * 100}% - 5px)`;
 
-        dot.style.top =
-            `calc(${point.y * 100}% - 5px)`;
+            dot.style.top =
+                `calc(${point.y * 100}% - 5px)`;
 
-        element.appendChild(dot);
+            element.appendChild(dot);
+        }
+    );
+}
+
+
+function clearSprayChart() {
+    sprayPoints = [];
+
+    drawSprayPoints();
+    saveGameState();
+}
+
+
+/* =========================================================
+   스트라이크존
+========================================================= */
+
+function recordZone(event) {
+    const element =
+        event.currentTarget;
+
+    const rect =
+        element.getBoundingClientRect();
+
+    zonePoints.push({
+        x:
+            (
+                event.clientX -
+                rect.left
+            ) / rect.width,
+
+        y:
+            (
+                event.clientY -
+                rect.top
+            ) / rect.height
     });
+
+    drawZonePoints();
+    saveGameState();
 }
 
 
@@ -2589,7 +2779,9 @@ function drawZonePoints() {
     const element =
         $("strikeZone");
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
 
     element
         .querySelectorAll(
@@ -2599,31 +2791,25 @@ function drawZonePoints() {
             dot.remove();
         });
 
-    zonePoints.forEach(point => {
-        const dot =
-            document.createElement(
-                "span"
-            );
+    zonePoints.forEach(
+        point => {
+            const dot =
+                document.createElement(
+                    "span"
+                );
 
-        dot.className =
-            "zone-dot";
+            dot.className =
+                "zone-dot";
 
-        dot.style.left =
-            `calc(${point.x * 100}% - 5px)`;
+            dot.style.left =
+                `calc(${point.x * 100}% - 5px)`;
 
-        dot.style.top =
-            `calc(${point.y * 100}% - 5px)`;
+            dot.style.top =
+                `calc(${point.y * 100}% - 5px)`;
 
-        element.appendChild(dot);
-    });
-}
-
-
-function clearSprayChart() {
-    sprayPoints = [];
-
-    drawSprayPoints();
-    saveGameState();
+            element.appendChild(dot);
+        }
+    );
 }
 
 
@@ -2636,14 +2822,127 @@ function clearStrikeZone() {
 
 
 /* =========================================================
-   자동 전력분석 리포트
+   리포트 선수 선택창
 ========================================================= */
 
-function generateReport() {
+function updateReportPlayerSelect() {
+    const select =
+        $("reportPlayerSelect");
+
+    if (!select) {
+        return;
+    }
+
+    const previousValue =
+        select.value;
+
+    const names =
+        new Set([
+            ...Object.keys(
+                batterStats
+            ),
+
+            ...Object.keys(
+                pitcherStats
+            )
+        ]);
+
+    select.innerHTML = `
+        <option value="">
+            개인 리포트 선수 선택
+        </option>
+    `;
+
+    Array.from(names)
+        .sort(
+            (a, b) =>
+                a.localeCompare(
+                    b,
+                    "ko"
+                )
+        )
+        .forEach(name => {
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                name;
+
+            option.textContent =
+                name;
+
+            select.appendChild(
+                option
+            );
+        });
+
+    if (
+        names.has(
+            previousValue
+        )
+    ) {
+        select.value =
+            previousValue;
+    }
+}
+
+
+/* =========================================================
+   경기 리포트
+========================================================= */
+
+function generateGameReport() {
     rebuildStatistics();
+    updateReportPlayerSelect();
 
     const mvp =
         getMvpPlayer();
+
+    const homeRecords =
+        plateAppearances.filter(
+            record =>
+                record.offenseTeam ===
+                "home"
+        );
+
+    const awayRecords =
+        plateAppearances.filter(
+            record =>
+                record.offenseTeam ===
+                "away"
+        );
+
+    const countHits =
+        records =>
+            records.filter(
+                record =>
+                    [
+                        "안타",
+                        "2루타",
+                        "3루타",
+                        "홈런"
+                    ].includes(
+                        normalizeResult(
+                            record.result
+                        )
+                    )
+            ).length;
+
+    const countStrikeouts =
+        records =>
+            records.filter(
+                record =>
+                    [
+                        "삼진",
+                        "티바 파울 아웃"
+                    ].includes(
+                        normalizeResult(
+                            record.result
+                        )
+                    )
+            ).length;
 
     const totalHomeRuns =
         plateAppearances.filter(
@@ -2653,89 +2952,540 @@ function generateReport() {
                 ) === "홈런"
         ).length;
 
-    const totalStrikeouts =
-        plateAppearances.filter(
-            record =>
-                [
-                    "삼진",
-                    "티바 파울 아웃"
-                ].includes(
-                    normalizeResult(
-                        record.result
-                    )
-                )
-        ).length;
+    const resultText =
+        awayScore > homeScore
+            ? `${getAwayTeamName()}이(가) ${awayScore - homeScore}점 차로 앞섰습니다.`
 
-    const pitcherLines =
-        Object.entries(
-            pitcherStats
-        )
-            .map(
-                ([name, stats]) => {
-                    const rate =
-                        stats.pitches > 0
-                            ? (
-                                stats.strikes /
-                                stats.pitches
-                            ) * 100
-                            : 0;
+            : homeScore > awayScore
+                ? `${getHomeTeamName()}이(가) ${homeScore - awayScore}점 차로 앞섰습니다.`
 
-                    return (
-                        `${name}: ` +
-                        `${stats.pitches}구, ` +
-                        `스트라이크 비율 ${rate.toFixed(1)}%, ` +
-                        `삼진 ${stats.strikeouts}, ` +
-                        `피안타 ${stats.hitsAllowed}, ` +
-                        `실점 ${stats.runsAllowed}`
-                    );
+                : "양 팀이 동점입니다.";
+
+    const recordRows =
+        plateAppearances
+            .map(record => `
+                <tr>
+                    <td>${escapeHtml(record.inning)}</td>
+                    <td>${escapeHtml(record.teamName)}</td>
+                    <td>${escapeHtml(record.pitcher)}</td>
+                    <td>${escapeHtml(record.batter)}</td>
+                    <td>${escapeHtml(record.result)}</td>
+                    <td>${Number(record.runs) || 0}</td>
+                    <td>${Number(record.rbi) || 0}</td>
+                    <td>${escapeHtml(record.scoreAfter)}</td>
+                </tr>
+            `)
+            .join("");
+
+    $("reportOutput").innerHTML = `
+        <article class="report-paper">
+
+            <h1>
+                DIAMOND VISION 경기 분석 보고서
+            </h1>
+
+            <p>
+                경기 날짜:
+                ${escapeHtml(
+                    $("todayDate")
+                        ?.textContent || ""
+                )}
+            </p>
+
+            <div class="report-info-grid">
+                <div>
+                    <span>HOME</span>
+                    <strong>
+                        ${escapeHtml(getHomeTeamName())}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>AWAY</span>
+                    <strong>
+                        ${escapeHtml(getAwayTeamName())}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>경기 스코어</span>
+                    <strong>
+                        ${awayScore} : ${homeScore}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>기록 타석</span>
+                    <strong>
+                        ${plateAppearances.length}
+                    </strong>
+                </div>
+            </div>
+
+            <h2>경기 결과</h2>
+
+            <p>
+                ${escapeHtml(resultText)}
+            </p>
+
+            <h2>팀 기록 비교</h2>
+
+            <div class="report-stat-grid">
+                <div>
+                    <span>HOME 득점</span>
+                    <strong>${homeScore}</strong>
+                </div>
+
+                <div>
+                    <span>AWAY 득점</span>
+                    <strong>${awayScore}</strong>
+                </div>
+
+                <div>
+                    <span>HOME 안타</span>
+                    <strong>${countHits(homeRecords)}</strong>
+                </div>
+
+                <div>
+                    <span>AWAY 안타</span>
+                    <strong>${countHits(awayRecords)}</strong>
+                </div>
+
+                <div>
+                    <span>HOME 삼진</span>
+                    <strong>${countStrikeouts(homeRecords)}</strong>
+                </div>
+
+                <div>
+                    <span>AWAY 삼진</span>
+                    <strong>${countStrikeouts(awayRecords)}</strong>
+                </div>
+
+                <div>
+                    <span>경기 홈런</span>
+                    <strong>${totalHomeRuns}</strong>
+                </div>
+
+                <div>
+                    <span>MVP</span>
+                    <strong>
+                        ${escapeHtml(
+                            mvp
+                                ? mvp.name
+                                : "-"
+                        )}
+                    </strong>
+                </div>
+            </div>
+
+            <h2>오늘의 MVP</h2>
+
+            <p>
+                ${
+                    mvp
+                        ? `${escapeHtml(mvp.name)} — 안타 ${mvp.stats.hits}, 홈런 ${mvp.stats.homeRuns}, 타점 ${mvp.stats.rbi}, OPS ${mvp.metrics.ops.toFixed(3)}`
+
+                        : "선정 가능한 기록이 없습니다."
                 }
-            )
-            .join("\n");
+            </p>
 
-    const report = `
-[경기 결과]
-${getAwayTeamName()} ${awayScore} : ${homeScore} ${getHomeTeamName()}
+            <h2>경기 흐름 평가</h2>
 
-[경기 흐름]
-현재 ${currentInning}회${isTopInning ? "초" : "말"}이며 총 ${plateAppearances.length}개의 타석이 기록됐습니다.
+            <p>
+                총 ${plateAppearances.length}개의 타석이 기록됐으며,
+                홈런은 ${totalHomeRuns}개입니다.
+                타구 방향과 투구 위치 기록을 영상과 함께 비교하면
+                공격과 수비의 특징을 더 정확히 분석할 수 있습니다.
+            </p>
 
-[공격 분석]
-홈런 ${totalHomeRuns}개, 삼진 및 티바 파울 아웃 ${totalStrikeouts}개가 기록됐습니다.
-HOME은 ${homeScore}점, AWAY는 ${awayScore}점을 기록했습니다.
+            <h2>타석별 기록</h2>
 
-[투수 분석]
-${pitcherLines || "투수 기록이 없습니다."}
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>회차</th>
+                        <th>팀</th>
+                        <th>투수</th>
+                        <th>타자</th>
+                        <th>결과</th>
+                        <th>득점</th>
+                        <th>타점</th>
+                        <th>스코어</th>
+                    </tr>
+                </thead>
 
-[MVP]
-${
-    mvp
-        ? `${mvp.name} — 안타 ${mvp.stats.hits}, 홈런 ${mvp.stats.homeRuns}, 타점 ${mvp.stats.rbi}, OPS ${mvp.metrics.ops.toFixed(3)}`
-        : "아직 MVP를 선정할 기록이 없습니다."
-}
+                <tbody>
+                    ${
+                        recordRows ||
+                        `
+                            <tr>
+                                <td colspan="8">
+                                    저장된 기록이 없습니다.
+                                </td>
+                            </tr>
+                        `
+                    }
+                </tbody>
+            </table>
 
-[자동 한 줄 평가]
-${
-    mvp
-        ? `${mvp.name}이(가) 공격 생산력에서 가장 높은 기여도를 보인 경기입니다.`
-        : "기록을 더 입력하면 선수와 팀의 특징을 자동으로 분석합니다."
-}
+            <h2>다음 경기 체크 포인트</h2>
 
-[다음 경기 체크 포인트]
-1. 득점권 상황에서 타구 방향과 결과를 비교합니다.
-2. 투수별 스트라이크 비율과 티바 전환 횟수를 확인합니다.
-3. 삼진과 티바 파울 아웃 비율을 줄일 수 있는 타격 전략을 준비합니다.
-    `.trim();
+            <p>
+                1. 득점권 상황에서의 타격 결과를 확인합니다.<br>
+                2. 투수별 스트라이크 비율과 피안타를 비교합니다.<br>
+                3. 티바 전환 뒤 파울 아웃 비율을 확인합니다.<br>
+                4. 타구 방향과 스트라이크존을 영상과 비교합니다.
+            </p>
 
-    if ($("reportOutput")) {
-        $("reportOutput")
-            .textContent =
-            report;
-    }
+            <div class="report-signature">
+                분석 시스템: Diamond Vision
+            </div>
+
+        </article>
+    `;
 }
 
 
 /* =========================================================
-   영상
+   선수 개인 리포트
+========================================================= */
+
+function generatePlayerReport() {
+    rebuildStatistics();
+    updateReportPlayerSelect();
+
+    const playerName =
+        $("reportPlayerSelect")
+            ?.value || "";
+
+    if (!playerName) {
+        alert(
+            "개인 리포트를 만들 선수를 선택해줘용."
+        );
+
+        return;
+    }
+
+    const batter =
+        batterStats[playerName] ||
+        null;
+
+    const pitcher =
+        pitcherStats[playerName] ||
+        null;
+
+    const batterMetrics =
+        batter
+            ? calculateBatterMetrics(
+                batter
+            )
+
+            : {
+                average: 0,
+                onBase: 0,
+                slugging: 0,
+                ops: 0
+            };
+
+    const strikeRate =
+        pitcher &&
+        pitcher.pitches > 0
+            ? (
+                pitcher.strikes /
+                pitcher.pitches
+            ) * 100
+
+            : 0;
+
+    const playerRecords =
+        plateAppearances.filter(
+            record =>
+                record.batter ===
+                    playerName ||
+                record.pitcher ===
+                    playerName
+        );
+
+    let playerType =
+        "기록 분석 대기";
+
+    if (batter) {
+        if (
+            batter.homeRuns >= 1 ||
+            batterMetrics.slugging >=
+                0.600
+        ) {
+            playerType =
+                "장타 생산형 타자";
+        } else if (
+            batterMetrics.average >=
+            0.300
+        ) {
+            playerType =
+                "컨택 중심형 타자";
+        } else if (
+            batter.strikeouts >
+            batter.hits
+        ) {
+            playerType =
+                "공격적 승부형 타자";
+        } else {
+            playerType =
+                "균형형 타자";
+        }
+    }
+
+    if (
+        pitcher &&
+        !batter
+    ) {
+        playerType =
+            strikeRate >= 65
+                ? "제구 중심형 투수"
+                : "공격적 승부형 투수";
+    }
+
+    const recordRows =
+        playerRecords
+            .map(record => `
+                <tr>
+                    <td>${escapeHtml(record.inning)}</td>
+
+                    <td>
+                        ${
+                            record.batter ===
+                            playerName
+                                ? "타자"
+                                : "투수"
+                        }
+                    </td>
+
+                    <td>${escapeHtml(record.result)}</td>
+                    <td>${Number(record.runs) || 0}</td>
+                    <td>${Number(record.rbi) || 0}</td>
+                    <td>${escapeHtml(record.note || "-")}</td>
+                </tr>
+            `)
+            .join("");
+
+    const evaluation =
+        batter
+            ? `${playerName} 선수는 타율 ${batterMetrics.average.toFixed(3)}, 장타율 ${batterMetrics.slugging.toFixed(3)}, OPS ${batterMetrics.ops.toFixed(3)}를 기록했습니다. 안타 생산력과 삼진 비율을 함께 점검하는 것이 좋습니다.`
+
+            : pitcher
+                ? `${playerName} 선수는 총 ${pitcher.pitches}구를 던졌으며 스트라이크 비율은 ${strikeRate.toFixed(1)}%입니다. 피안타와 실점이 나온 상황을 영상과 비교하는 것이 좋습니다.`
+
+                : "분석할 기록이 부족합니다.";
+
+    $("reportOutput").innerHTML = `
+        <article class="report-paper">
+
+            <h1>
+                DIAMOND VISION 선수 개인 보고서
+            </h1>
+
+            <div class="report-info-grid">
+                <div>
+                    <span>선수명</span>
+                    <strong>
+                        ${escapeHtml(playerName)}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>선수 유형</span>
+                    <strong>
+                        ${escapeHtml(playerType)}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>경기 날짜</span>
+                    <strong>
+                        ${escapeHtml(
+                            $("todayDate")
+                                ?.textContent || ""
+                        )}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>경기</span>
+                    <strong>
+                        ${escapeHtml(getAwayTeamName())}
+                        vs
+                        ${escapeHtml(getHomeTeamName())}
+                    </strong>
+                </div>
+            </div>
+
+            <h2>타자 기록</h2>
+
+            <div class="report-stat-grid">
+                <div>
+                    <span>타석</span>
+                    <strong>${batter?.pa || 0}</strong>
+                </div>
+
+                <div>
+                    <span>안타</span>
+                    <strong>${batter?.hits || 0}</strong>
+                </div>
+
+                <div>
+                    <span>홈런</span>
+                    <strong>${batter?.homeRuns || 0}</strong>
+                </div>
+
+                <div>
+                    <span>타점</span>
+                    <strong>${batter?.rbi || 0}</strong>
+                </div>
+
+                <div>
+                    <span>타율</span>
+                    <strong>${batterMetrics.average.toFixed(3)}</strong>
+                </div>
+
+                <div>
+                    <span>출루율</span>
+                    <strong>${batterMetrics.onBase.toFixed(3)}</strong>
+                </div>
+
+                <div>
+                    <span>장타율</span>
+                    <strong>${batterMetrics.slugging.toFixed(3)}</strong>
+                </div>
+
+                <div>
+                    <span>OPS</span>
+                    <strong>${batterMetrics.ops.toFixed(3)}</strong>
+                </div>
+            </div>
+
+            <h2>투수 기록</h2>
+
+            <div class="report-stat-grid">
+                <div>
+                    <span>상대한 타자</span>
+                    <strong>${pitcher?.battersFaced || 0}</strong>
+                </div>
+
+                <div>
+                    <span>투구 수</span>
+                    <strong>${pitcher?.pitches || 0}</strong>
+                </div>
+
+                <div>
+                    <span>스트라이크 비율</span>
+                    <strong>${strikeRate.toFixed(1)}%</strong>
+                </div>
+
+                <div>
+                    <span>삼진</span>
+                    <strong>${pitcher?.strikeouts || 0}</strong>
+                </div>
+
+                <div>
+                    <span>피안타</span>
+                    <strong>${pitcher?.hitsAllowed || 0}</strong>
+                </div>
+
+                <div>
+                    <span>실점</span>
+                    <strong>${pitcher?.runsAllowed || 0}</strong>
+                </div>
+
+                <div>
+                    <span>티바 전환</span>
+                    <strong>${pitcher?.teeBatters || 0}</strong>
+                </div>
+
+                <div>
+                    <span>볼</span>
+                    <strong>${pitcher?.balls || 0}</strong>
+                </div>
+            </div>
+
+            <h2>개인 경기 평가</h2>
+
+            <p>
+                ${escapeHtml(evaluation)}
+            </p>
+
+            <h2>선수 경기 로그</h2>
+
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>회차</th>
+                        <th>역할</th>
+                        <th>결과</th>
+                        <th>득점</th>
+                        <th>타점</th>
+                        <th>메모</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${
+                        recordRows ||
+                        `
+                            <tr>
+                                <td colspan="6">
+                                    해당 선수 기록이 없습니다.
+                                </td>
+                            </tr>
+                        `
+                    }
+                </tbody>
+            </table>
+
+            <h2>다음 경기 체크 포인트</h2>
+
+            <p>
+                1. 성공한 타석과 실패한 타석의 투구 위치를 비교합니다.<br>
+                2. 타구 방향과 경기 영상을 함께 확인합니다.<br>
+                3. 삼진 또는 피안타가 나온 상황을 분석합니다.<br>
+                4. 다음 경기에서 보완할 목표 한 가지를 정합니다.
+            </p>
+
+            <div class="report-signature">
+                분석 시스템: Diamond Vision
+            </div>
+
+        </article>
+    `;
+}
+
+
+/* =========================================================
+   리포트 인쇄
+========================================================= */
+
+function printCurrentReport() {
+    const report =
+        $("reportOutput");
+
+    if (
+        !report ||
+        !report.querySelector(
+            ".report-paper"
+        )
+    ) {
+        alert(
+            "먼저 경기 리포트나 선수 개인 리포트를 생성해줘용."
+        );
+
+        return;
+    }
+
+    window.print();
+}
+
+
+/* =========================================================
+   영상 기능
 ========================================================= */
 
 function isYouTubeMode() {
@@ -2751,7 +3501,9 @@ function loadVideo(event) {
     const file =
         event.target.files?.[0];
 
-    if (!file) return;
+    if (!file) {
+        return;
+    }
 
     if (localVideoObjectUrl) {
         URL.revokeObjectURL(
@@ -2765,7 +3517,9 @@ function loadVideo(event) {
     const video =
         $("video");
 
-    if (!video) return;
+    if (!video) {
+        return;
+    }
 
     video.src =
         localVideoObjectUrl;
@@ -2776,8 +3530,8 @@ function loadVideo(event) {
     video.load();
 
     if ($("youtubePlayerWrap")) {
-        $("youtubePlayerWrap")
-            .hidden = true;
+        $("youtubePlayerWrap").hidden =
+            true;
     }
 }
 
@@ -2835,8 +3589,8 @@ function loadYouTubeVideo() {
     }
 
     if ($("youtubePlayerWrap")) {
-        $("youtubePlayerWrap")
-            .hidden = false;
+        $("youtubePlayerWrap").hidden =
+            false;
     }
 
     if (
@@ -2894,18 +3648,31 @@ window.onYouTubeIframeAPIReady =
     };
 
 
+function getCurrentVideoTime() {
+    if (isYouTubeMode()) {
+        return (
+            window.youtubePlayer
+                .getCurrentTime() || 0
+        );
+    }
+
+    return (
+        $("video")
+            ?.currentTime || 0
+    );
+}
+
+
 function back5() {
     if (isYouTubeMode()) {
-        const time =
-            window.youtubePlayer
-                .getCurrentTime() || 0;
-
         window.youtubePlayer
             .seekTo(
                 Math.max(
                     0,
-                    time - 5
+                    getCurrentVideoTime() -
+                        5
                 ),
+
                 true
             );
 
@@ -2915,25 +3682,23 @@ function back5() {
     const video =
         $("video");
 
-    if (!video) return;
-
-    video.currentTime =
-        Math.max(
-            0,
-            video.currentTime - 5
-        );
+    if (video) {
+        video.currentTime =
+            Math.max(
+                0,
+                video.currentTime - 5
+            );
+    }
 }
 
 
 function forward5() {
     if (isYouTubeMode()) {
-        const time =
-            window.youtubePlayer
-                .getCurrentTime() || 0;
-
         window.youtubePlayer
             .seekTo(
-                time + 5,
+                getCurrentVideoTime() +
+                    5,
+
                 true
             );
 
@@ -2972,7 +3737,9 @@ function playPause() {
     const video =
         $("video");
 
-    if (!video) return;
+    if (!video) {
+        return;
+    }
 
     if (video.paused) {
         video
@@ -2997,18 +3764,15 @@ function setVideoSpeed(speed) {
         return;
     }
 
-    const video =
-        $("video");
-
-    if (video) {
-        video.playbackRate =
+    if ($("video")) {
+        $("video").playbackRate =
             value;
     }
 }
 
 
 /* =========================================================
-   저장과 불러오기
+   저장
 ========================================================= */
 
 function saveGameState() {
@@ -3061,6 +3825,10 @@ function saveGameState() {
 }
 
 
+/* =========================================================
+   불러오기
+========================================================= */
+
 function loadGameState() {
     let state = null;
 
@@ -3078,7 +3846,9 @@ function loadGameState() {
         );
     }
 
-    if (!state) return;
+    if (!state) {
+        return;
+    }
 
     currentInning =
         Number(
@@ -3086,8 +3856,7 @@ function loadGameState() {
         ) || 1;
 
     isTopInning =
-        state.isTopInning !==
-        false;
+        state.isTopInning !== false;
 
     ballCount =
         Number(
@@ -3242,7 +4011,7 @@ function loadGameState() {
 
 
 /* =========================================================
-   기타
+   HTML 문자 보호
 ========================================================= */
 
 function escapeHtml(value) {
@@ -3270,6 +4039,10 @@ function escapeHtml(value) {
 }
 
 
+/* =========================================================
+   사이드 메뉴 이동
+========================================================= */
+
 function connectNavigation() {
     document
         .querySelectorAll(
@@ -3286,13 +4059,14 @@ function connectNavigation() {
                                 .scroll
                         );
 
-                    target?.scrollIntoView({
-                        behavior:
-                            "smooth",
+                    target
+                        ?.scrollIntoView({
+                            behavior:
+                                "smooth",
 
-                        block:
-                            "start"
-                    });
+                            block:
+                                "start"
+                        });
 
                     document
                         .querySelectorAll(
@@ -3332,6 +4106,7 @@ window.addEventListener(
 
         updateTeamTitles();
         updateInningDisplay();
+
         updateCountDisplay();
         updateScoreDisplay();
         updateBaseDisplay();
