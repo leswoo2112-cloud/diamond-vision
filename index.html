@@ -884,35 +884,58 @@
             </section>
 
 
-            <section
-                id="reportSection"
-                class="panel report-section"
-            >
-                <div class="panel-head">
-                    <div>
-                        <div class="section-kicker">
-                            SCOUTING REPORT
-                        </div>
+<section
+    id="reportSection"
+    class="panel report-section"
+>
+    <div class="panel-head">
+        <div>
+            <div class="section-kicker">
+                SCOUTING REPORT
+            </div>
 
-                        <h2>자동 전력분석 리포트</h2>
-                    </div>
+            <h2>경기·선수 리포트</h2>
+        </div>
+    </div>
 
-                    <button
-                        class="primary"
-                        type="button"
-                        onclick="generateReport()"
-                    >
-                        리포트 생성
-                    </button>
-                </div>
+    <div class="report-controls">
+        <button
+            class="primary"
+            type="button"
+            onclick="generateGameReport()"
+        >
+            경기 리포트 생성
+        </button>
 
-                <div
-                    id="reportOutput"
-                    class="report-output"
-                >
-                    경기 기록을 저장한 뒤 리포트를 생성해줘용.
-                </div>
-            </section>
+        <select id="reportPlayerSelect">
+            <option value="">
+                개인 리포트 선수 선택
+            </option>
+        </select>
+
+        <button
+            type="button"
+            onclick="generatePlayerReport()"
+        >
+            선수 개인 리포트 생성
+        </button>
+
+        <button
+            class="print-button"
+            type="button"
+            onclick="printCurrentReport()"
+        >
+            🖨 리포트 인쇄
+        </button>
+    </div>
+
+    <div
+        id="reportOutput"
+        class="report-output"
+    >
+        경기 기록을 저장한 뒤 리포트를 생성해줘용.
+    </div>
+</section>
 
         </main>
     </div>
