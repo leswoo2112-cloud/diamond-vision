@@ -1,0 +1,1074 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --background: #07101f;
+    --background-dark: #050c18;
+    --panel: #0d1b2e;
+    --panel-dark: #081425;
+    --line: #21324b;
+    --line-light: #31445f;
+    --text: #eef4ff;
+    --muted: #91a0b4;
+    --red: #ff4057;
+    --red-dark: #9e1931;
+    --blue: #2e6cff;
+    --blue-dark: #153c82;
+    --green: #36e68b;
+    --yellow: #ffc628;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    background:
+        radial-gradient(
+            circle at 70% 0%,
+            rgba(21, 50, 91, 0.25),
+            transparent 40%
+        ),
+        var(--background);
+    color: var(--text);
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Apple SD Gothic Neo",
+        "Noto Sans KR",
+        sans-serif;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.app-shell {
+    display: grid;
+    grid-template-columns: 238px minmax(0, 1fr);
+    grid-template-rows: 96px auto;
+    min-height: 100vh;
+}
+
+
+/* 상단 메뉴 */
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    padding: 0 28px;
+    background: rgba(5, 12, 24, 0.97);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(18px);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 310px;
+}
+
+.brand-icon {
+    width: 55px;
+    height: 55px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #7f2638;
+    border-radius: 17px;
+    background:
+        linear-gradient(
+            145deg,
+            #351822,
+            #091323
+        );
+    box-shadow: 0 10px 28px rgba(255, 64, 87, 0.12);
+    font-size: 29px;
+}
+
+.brand h1 {
+    margin: 0;
+    font-size: 25px;
+    letter-spacing: 0.7px;
+}
+
+.brand p {
+    margin: 5px 0 0;
+    color: var(--red);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+.topnav {
+    align-self: stretch;
+    display: flex;
+    align-items: stretch;
+    gap: 35px;
+}
+
+.topnav button {
+    border: 0;
+    border-bottom: 3px solid transparent;
+    background: transparent;
+    color: #9eacc0;
+    padding: 0 5px;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.topnav button.active {
+    color: white;
+    border-bottom-color: var(--red);
+}
+
+.live-wrap {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    color: #9aa8bb;
+    white-space: nowrap;
+}
+
+.live-dot {
+    padding: 12px 17px;
+    border: 1px solid #126f4e;
+    border-radius: 999px;
+    background: rgba(7, 50, 37, 0.55);
+    color: var(--green);
+    font-weight: 900;
+}
+
+
+/* 사이드 메뉴 */
+
+.sidebar {
+    position: sticky;
+    top: 96px;
+    height: calc(100vh - 96px);
+    overflow-y: auto;
+    padding: 25px 17px;
+    background: var(--background-dark);
+    border-right: 1px solid var(--line);
+}
+
+.sidebar h3 {
+    margin: 15px 10px 8px;
+    color: #5d6d82;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.side {
+    width: 100%;
+    border: 0;
+    border-left: 4px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    color: #9eacc0;
+    text-align: left;
+    padding: 15px 15px;
+    margin: 2px 0;
+    font-size: 16px;
+}
+
+.side:hover,
+.side.active {
+    border-left-color: var(--red);
+    background:
+        linear-gradient(
+            90deg,
+            rgba(119, 24, 43, 0.85),
+            rgba(48, 19, 33, 0.68)
+        );
+    color: white;
+}
+
+
+/* 공통 */
+
+.content {
+    min-width: 0;
+    padding: 25px;
+}
+
+.panel {
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(14, 29, 49, 0.98),
+            rgba(8, 20, 37, 0.98)
+        );
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.25);
+    padding: 22px;
+}
+
+.panel h2 {
+    margin: 5px 0 18px;
+}
+
+.section-kicker {
+    color: var(--red);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+.description {
+    margin-top: -8px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.head-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.panel-head button,
+.current-strip button,
+.clear-chart-button {
+    border: 1px solid var(--line-light);
+    border-radius: 12px;
+    background: #142238;
+    color: white;
+    padding: 11px 15px;
+}
+
+.primary,
+.save-main,
+.youtube-row button {
+    border: 0 !important;
+    background:
+        linear-gradient(
+            90deg,
+            #ff4057,
+            #d70f2d
+        ) !important;
+    color: white;
+    font-weight: 900;
+}
+
+
+/* 점수판 */
+
+.scoreboard {
+    display: grid;
+    grid-template-columns:
+        minmax(260px, 1fr)
+        350px
+        minmax(260px, 1fr);
+    padding: 0;
+    overflow: hidden;
+}
+
+.team {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 37px;
+}
+
+.team.home {
+    background:
+        linear-gradient(
+            100deg,
+            #80172e,
+            #3b1321
+        );
+}
+
+.team.away {
+    justify-content: flex-end;
+    background:
+        linear-gradient(
+            100deg,
+            #0e2850,
+            #164897
+        );
+}
+
+.team span {
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.team input {
+    min-width: 0;
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: white;
+    font-size: clamp(20px, 2vw, 27px);
+    font-weight: 900;
+}
+
+.team.away input {
+    text-align: right;
+}
+
+.team strong {
+    font-size: clamp(55px, 6vw, 78px);
+    line-height: 1;
+}
+
+.center-board {
+    display: grid;
+    place-items: center;
+    gap: 12px;
+    padding: 22px;
+    background: #071120;
+}
+
+.inning-row {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.inning-row strong {
+    font-size: 25px;
+}
+
+.inning-row button {
+    width: 43px;
+    height: 43px;
+    border: 1px solid var(--line-light);
+    border-radius: 11px;
+    background: #142238;
+    color: white;
+}
+
+.bases {
+    position: relative;
+    width: 105px;
+    height: 72px;
+}
+
+.bases button {
+    position: absolute;
+    width: 29px;
+    height: 29px;
+    border: 2px solid #53627a;
+    background: #0a1424;
+    transform: rotate(45deg);
+}
+
+.bases button.active {
+    border-color: #fff1a3;
+    background: var(--yellow);
+    box-shadow: 0 0 15px rgba(255, 198, 40, 0.55);
+}
+
+#base2 {
+    left: 38px;
+    top: 0;
+}
+
+#base3 {
+    left: 11px;
+    top: 33px;
+}
+
+#base1 {
+    right: 11px;
+    top: 33px;
+}
+
+.count-row {
+    display: flex;
+    gap: 11px;
+}
+
+.count-row div {
+    min-width: 76px;
+    border: 1px solid #2c3f5b;
+    border-radius: 12px;
+    background: #0d1a2c;
+    padding: 10px 16px;
+    text-align: center;
+    color: #a9b5c7;
+}
+
+.count-row div:nth-child(1) b {
+    color: var(--green);
+}
+
+.count-row div:nth-child(2) b {
+    color: var(--yellow);
+}
+
+.count-row div:nth-child(3) b {
+    color: var(--red);
+}
+
+
+/* 현재 타순 */
+
+.current-strip {
+    display: grid;
+    grid-template-columns:
+        1fr 1fr 1fr auto;
+    align-items: center;
+    gap: 15px;
+    margin-top: 18px;
+}
+
+.current-strip span {
+    display: block;
+    color: #718198;
+    font-size: 13px;
+}
+
+.current-strip strong {
+    display: block;
+    margin-top: 5px;
+}
+
+
+/* 영상 및 타석 기록 */
+
+.two-col {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.youtube-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+}
+
+.youtube-row input,
+.form-grid input,
+.form-grid select,
+.lineup-row input,
+.lineup-row select {
+    min-width: 0;
+    width: 100%;
+    border: 1px solid #2c3f5b;
+    border-radius: 12px;
+    outline: none;
+    background: var(--panel-dark);
+    color: white;
+    padding: 14px;
+}
+
+.youtube-row button {
+    border-radius: 12px;
+    padding: 0 20px;
+}
+
+#videoSection > input[type="file"] {
+    margin-top: 14px;
+    color: var(--muted);
+}
+
+.video-wrap {
+    height: 340px;
+    overflow: hidden;
+    margin: 16px 0;
+    border-radius: 18px;
+    background: black;
+}
+
+.video-wrap video,
+.video-wrap iframe,
+#youtubePlayerWrap,
+#youtubePlayer {
+    width: 100%;
+    height: 100%;
+}
+
+.video-controls {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 9px;
+}
+
+.video-controls button,
+.pitch-buttons button,
+.result-buttons button {
+    border: 1px solid #2d405d;
+    border-radius: 13px;
+    background: #132137;
+    color: white;
+    padding: 14px 8px;
+    font-weight: 800;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 11px;
+}
+
+.form-grid label {
+    display: grid;
+    gap: 7px;
+    color: #95a4b7;
+    font-size: 13px;
+}
+
+.pitch-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 9px;
+}
+
+.result-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 9px;
+}
+
+.result-buttons button:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+}
+
+.sequence,
+.selected-result {
+    min-height: 49px;
+    margin: 12px 0;
+    border: 1px solid #20324b;
+    border-radius: 12px;
+    background: #07111f;
+    color: #a8b4c5;
+    padding: 14px;
+}
+
+.result-inputs {
+    margin-top: 13px;
+}
+
+.save-main {
+    width: 100%;
+    border-radius: 14px;
+    padding: 18px;
+    font-size: 17px;
+}
+
+
+/* 라인업 */
+
+.hidden {
+    display: none;
+}
+
+#lineupSection {
+    margin-top: 18px;
+}
+
+.lineup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.lineup-card {
+    border: 1px solid #243653;
+    border-radius: 18px;
+    padding: 18px;
+}
+
+.home-lineup {
+    border-left: 4px solid var(--red);
+}
+
+.away-lineup {
+    border-left: 4px solid var(--blue);
+}
+
+.lineup-row {
+    display: grid;
+    grid-template-columns: 42px 1fr 125px;
+    align-items: center;
+    gap: 10px;
+    margin: 9px 0;
+}
+
+.lineup-row > b {
+    display: grid;
+    place-items: center;
+    height: 42px;
+    border: 1px solid var(--line-light);
+    border-radius: 11px;
+    background: #142238;
+}
+
+.lineup-row.current-batter-row {
+    outline: 2px solid var(--red);
+    border-radius: 14px;
+    padding: 5px;
+    background: rgba(255, 64, 87, 0.07);
+}
+
+
+/* 기록 분석 */
+
+.analysis-grid {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.25fr)
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #23344d;
+    text-align: left;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+th {
+    color: #95a4b7;
+}
+
+.stats-cards {
+    display: grid;
+    gap: 10px;
+}
+
+.stat-card {
+    border: 1px solid #20324b;
+    border-radius: 14px;
+    background: #07111f;
+    padding: 14px;
+}
+
+.stat-card h3 {
+    margin: 0 0 10px;
+}
+
+.mini-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.mini-grid div {
+    border-radius: 10px;
+    background: #0d1a2b;
+    padding: 9px;
+}
+
+.mini-grid span {
+    display: block;
+    color: #728197;
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+
+/* 대시보드 */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 2fr)
+        minmax(250px, 1.15fr)
+        minmax(230px, 1fr)
+        minmax(230px, 1fr);
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.chart-box {
+    height: 265px;
+}
+
+
+/* 타구 차트 */
+
+.chart-analysis-grid {
+    grid-template-columns:
+        minmax(0, 1.7fr)
+        minmax(270px, 0.8fr)
+        minmax(260px, 0.8fr);
+}
+
+.spray-chart {
+    position: relative;
+    height: 390px;
+    overflow: hidden;
+    border-radius: 50% 50% 12px 12px;
+    background:
+        radial-gradient(
+            circle at 50% 100%,
+            #60401d 0 18%,
+            transparent 18.5%
+        ),
+        repeating-conic-gradient(
+            from -28deg at 50% 100%,
+            #214622 0deg 18deg,
+            #1a381d 18deg 36deg
+        );
+    border: 1px solid #34503c;
+    cursor: crosshair;
+}
+
+.spray-chart::before,
+.spray-chart::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    width: 2px;
+    height: 92%;
+    background: rgba(255, 255, 255, 0.35);
+    transform-origin: bottom;
+}
+
+.spray-chart::before {
+    left: 50%;
+    transform: rotate(-42deg);
+}
+
+.spray-chart::after {
+    right: 50%;
+    transform: rotate(42deg);
+}
+
+.field-label {
+    position: absolute;
+    color: #d2dce9;
+    font-size: 13px;
+}
+
+.left-field {
+    left: 19%;
+    top: 19%;
+}
+
+.center-field {
+    left: 47%;
+    top: 8%;
+}
+
+.right-field {
+    right: 18%;
+    top: 19%;
+}
+
+.third-base {
+    left: 25%;
+    bottom: 26%;
+}
+
+.shortstop {
+    left: 39%;
+    bottom: 39%;
+}
+
+.second-base {
+    right: 39%;
+    bottom: 39%;
+}
+
+.first-base {
+    right: 25%;
+    bottom: 26%;
+}
+
+.home-marker {
+    position: absolute;
+    left: 50%;
+    bottom: 4%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.spray-dot,
+.zone-dot {
+    position: absolute;
+    z-index: 5;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--red);
+    box-shadow: 0 0 10px rgba(255, 64, 87, 0.8);
+    pointer-events: none;
+}
+
+
+/* 스트라이크존 */
+
+.strike-zone {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 100%;
+    max-width: 330px;
+    aspect-ratio: 1 / 1;
+    margin: 25px auto;
+    border: 2px solid #61718a;
+    cursor: crosshair;
+}
+
+.strike-zone > span {
+    border: 1px solid #31445f;
+    background: rgba(17, 32, 53, 0.55);
+}
+
+
+/* 하이라이트와 리포트 */
+
+.highlight-list {
+    display: grid;
+    gap: 10px;
+    color: #aab6c7;
+}
+
+.highlight-item {
+    border-left: 3px solid var(--red);
+    border-radius: 7px;
+    background: #07111f;
+    padding: 11px;
+}
+
+.report-section {
+    margin-top: 18px;
+}
+
+.report-output {
+    min-height: 220px;
+    white-space: pre-wrap;
+    line-height: 1.75;
+    border: 1px solid #20324b;
+    border-radius: 14px;
+    background: #07111f;
+    padding: 18px;
+}
+
+
+/* 투구 칩 */
+
+.pitch-chip {
+    display: inline-block;
+    margin: 2px;
+    border-radius: 999px;
+    background: #24324a;
+    color: white;
+    padding: 5px 9px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.pitch-chip.ball {
+    background: #134f36;
+}
+
+.pitch-chip.strike {
+    background: #5a4a12;
+}
+
+.pitch-chip.foul {
+    background: #65411e;
+}
+
+.pitch-chip.swing {
+    background: #63283b;
+}
+
+
+/* 태블릿 */
+
+@media (max-width: 1180px) {
+    .app-shell {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+    }
+
+    .topbar {
+        position: static;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .topnav {
+        display: none;
+    }
+
+    .scoreboard {
+        grid-template-columns:
+            minmax(220px, 1fr)
+            270px
+            minmax(220px, 1fr);
+    }
+
+    .analysis-grid,
+    .dashboard-grid,
+    .chart-analysis-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-box {
+        height: 330px;
+    }
+}
+
+
+/* 모바일 */
+
+@media (max-width: 760px) {
+    .topbar {
+        padding: 15px;
+    }
+
+    .brand {
+        min-width: 0;
+    }
+
+    .brand-icon {
+        width: 47px;
+        height: 47px;
+    }
+
+    .brand h1 {
+        font-size: 19px;
+    }
+
+    .brand p {
+        font-size: 9px;
+    }
+
+    .live-wrap {
+        display: none;
+    }
+
+    .content {
+        padding: 10px;
+    }
+
+    .panel {
+        border-radius: 17px;
+        padding: 16px;
+    }
+
+    .scoreboard {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .center-board {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    .team {
+        padding: 20px 15px;
+    }
+
+    .team strong {
+        font-size: 48px;
+    }
+
+    .team input {
+        font-size: 17px;
+    }
+
+    .current-strip {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .current-strip button {
+        grid-column: 1 / -1;
+    }
+
+    .two-col,
+    .lineup-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .result-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pitch-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .video-controls {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .video-wrap {
+        height: 240px;
+    }
+
+    .lineup-row {
+        grid-template-columns: 37px 1fr 100px;
+    }
+
+    .mini-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .youtube-row {
+        grid-template-columns: 1fr;
+    }
+
+    .youtube-row button {
+        padding: 14px;
+    }
+
+    .panel-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
