@@ -781,6 +781,51 @@ function addPitch(type) {
     saveGameState();
 }
 
+function undoCurrentInput() {
+    if (selectedPlateResult !== "") {
+        selectedPlateResult = "";
+        updateSelectedResult();
+        updateTeeButtons();
+        saveGameState();
+        return;
+    }
+
+    if (currentPitchSequence.length === 0) {
+        return;
+    }
+
+    const lastPitch = currentPitchSequence.pop();
+
+    switch (lastPitch) {
+        case "S":
+        case "SW":
+            strikeCount = Math.max(0, strikeCount - 1);
+            break;
+
+        case "B":
+            ballCount = Math.max(0, ballCount - 1);
+            break;
+
+        case "F":
+            if (strikeCount < 2) {
+                strikeCount = Math.max(0, strikeCount - 1);
+            }
+            break;
+
+        case "TF":
+            strikeCount = Math.max(0, strikeCount - 1);
+            if (selectedPlateResult === "티바 파울 아웃") {
+                selectedPlateResult = "";
+            }
+            break;
+    }
+
+    updatePitchSequence();
+    updateCountDisplay();
+    updateSelectedResult();
+    updateTeeButtons();
+    saveGameState();
+}
 
 function updatePitchSequence() {
     const element =
@@ -4029,6 +4074,9 @@ window.clearLineups =
 window.addPitch =
     addPitch;
 
+window.undoCurrentInput =
+    undoCurrentInput;
+    
 window.setPlateResult =
     setPlateResult;
 
