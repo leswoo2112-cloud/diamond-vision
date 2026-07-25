@@ -437,6 +437,21 @@
                     >
                         아직 투구 기록이 없습니다.
                     </div>
+                    <div
+    id="pitchSequence"
+    class="sequence"
+>
+    아직 투구 기록이 없습니다.
+</div>
+
+<button
+    type="button"
+    onclick="undoCurrentInput()"
+>
+    ↶ 마지막 입력 취소
+</button>
+
+<h3>타석 결과</h3>
 
 
                     <h3>타석 결과</h3>
@@ -950,3 +965,138 @@
     <script src="app.js"></script>
 </body>
 </html>
+function undoCurrentInput() {
+    /*
+        선택한 타석 결과가 있으면
+        먼저 결과 선택만 취소
+    */
+
+    if (selectedPlateResult) {
+        selectedPlateResult = "";
+
+        updateSelectedResult();
+        updateTeeButtons();
+        saveGameState();
+
+        alert(
+            "선택한 타석 결과를 취소했어용."
+        );
+
+        return;
+    }
+
+    /*
+        티바 모드인데 아직 결과 선택 전이면
+        티바 전환을 취소
+    */
+
+    if (
+        isTeeMode &&
+        currentPitchSequence.length === 0
+    ) {
+        isTeeMode = false;
+        teeReason = "";
+
+        /*
+            볼넷으로 티바에 들어온 경우
+            볼 하나 되돌리기
+        */
+
+        if (ballCount >= 4) {
+            ballCount = 3;
+        }
+
+        updateCountDisplay();
+        updateSelectedResult();
+        updateTeeButtons();
+        saveGameState();
+
+        alert(
+            "티바 전환을 취소했어용."
+        );
+
+        return;
+    }
+
+    /*
+        가장 최근 투구 기록 하나 삭제
+    */
+
+    const lastPitch =
+        currentPitchSequence.pop();
+
+    if (!lastPitch) {
+        alert(
+            "되돌릴 투구 기록이나 타석 결과가 없어용."
+        );
+
+        return;
+    }
+
+    if (lastPitch === "B") {
+        ballCount =
+            Math.max(
+                0,
+                ballCount - 1
+            );
+    }
+
+    if (
+        lastPitch === "S" ||
+        lastPitch === "SW"
+    ) {
+        strikeCount =
+            Math.max(
+                0,
+                strikeCount - 1
+            );
+    }
+
+    if (
+        lastPitch === "F" &&
+        strikeCount > 0 &&
+        strikeCount <= 2
+    ) {
+        strikeCount -= 1;
+    }
+
+    if (lastPitch === "TF") {
+        strikeCount =
+            Math.max(
+                0,
+                strikeCount - 1
+            );
+
+        if (
+            selectedPlateResult ===
+            "티바 파울 아웃"
+        ) {
+            selectedPlateResult = "";
+        }
+    }
+
+    /*
+        삼진 자동 선택 취소
+    */
+
+    if (
+        selectedPlateResult ===
+        "삼진" &&
+        strikeCount < 3
+    ) {
+        selectedPlateResult = "";
+    }
+
+    updatePitchSequence();
+    updateCountDisplay();
+    updateSelectedResult();
+    updateTeeButtons();
+    saveGameState();
+
+    alert(
+        "마지막 입력을 되돌렸어용."
+    );
+}
+
+window.undoCurrentInput =
+    undoCurrentInput;
